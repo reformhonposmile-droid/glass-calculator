@@ -99,12 +99,12 @@ $chatCss = @'
 $chatHtml = @'
 
 <button class="float-chat-launcher" id="float-chat-launcher" type="button" aria-controls="float-chat-panel" aria-expanded="false">
-  <img src="float-chat/assets/float-icon.png" alt="">
+  <img src="float-icon.png" alt="">
   <span>フロートに相談</span>
 </button>
 <section class="float-chat-panel" id="float-chat-panel" aria-label="フロート相談室">
   <button class="float-chat-close" id="float-chat-close" type="button" aria-label="チャットを閉じる">×</button>
-  <iframe title="フロート相談室" src="float-chat/index.html"></iframe>
+  <iframe title="フロート相談室" src="index_float-chat.html"></iframe>
 </section>
 '@
 
