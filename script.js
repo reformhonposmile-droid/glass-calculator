@@ -3,7 +3,7 @@ const form = document.querySelector(".composer");
 const input = document.querySelector("#messageInput");
 const quickActions = document.querySelectorAll("[data-question]");
 
-const floatImage = "assets/float-icon.png";
+const floatImage = "float-icon.png";
 const products = window.FLOAT_PRODUCTS || [];
 const qaItems = window.FLOAT_QA || [];
 let lastDiscussedProduct = null;
