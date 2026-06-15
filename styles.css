@@ -19,7 +19,7 @@
 body {
   min-height: 100vh;
   margin: 0;
-  background: url("assets/background.jpg") center / cover fixed no-repeat;
+  background: url("background.jpg") center / cover fixed no-repeat;
   color: var(--ink);
   font-family:
     "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
