@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ガラス修理計算ソフト">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="manifest" href="manifest.json">
+<title>ガラス修理計算ソフト</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f4f0;--surface:#fff;--surface2:#f0ede8;--accent:#1a6eb5;--accent2:#1a2e5a;--text:#1a1a2e;--text2:#6b6b6b;--border:#ddd9d2;--green:#2d6a4f;--green-bg:#e8f5ee}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text)}
+#app{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;}
+header{height:52px;background:#6aaedd;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0}
+.logo{width:28px;height:28px;background:var(--accent2);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo svg{width:16px;height:16px}
+header h1{font-size:15px;font-weight:700;color:#fff;letter-spacing:.03em}
+.version{margin-left:auto;font-size:10px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace}
+#content{position:absolute;top:52px;left:0;right:0;bottom:54px;}
+nav.main-nav{position:fixed;bottom:0;left:0;right:0;height:54px;background:#6aaedd;display:flex;z-index:100;}
+.mnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9px;color:rgba(255,255,255,0.7);border:none;background:none;cursor:pointer;padding:5px 2px;font-family:inherit}
+.mnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mnav-btn.active{color:#fff;font-weight:700}
+.main-indicator{position:absolute;top:0;height:2px;background:rgba(255,255,255,0.8);transition:left .25s cubic-bezier(.4,0,.2,1),width .25s cubic-bezier(.4,0,.2,1)}
+.page{display:none;}
+.page.active{display:block;position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+
+.page-inner{padding:14px}
+.cat-tabs{display:flex;gap:6px;overflow-x:auto;padding:12px 14px 10px;-webkit-overflow-scrolling:touch}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-btn{white-space:nowrap;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;font-family:inherit;cursor:pointer;flex-shrink:0}
+.cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cat-content{display:none;padding:0 14px 14px}
+.cat-content.active{display:block}
+.pcard{background:var(--surface);border-radius:14px;margin-bottom:12px;border:1px solid var(--border);overflow:hidden;max-width:100%}
+.pcard-img{width:100%;height:160px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--surface2);max-width:100%}
+.pcard-img img{width:100%;height:160px;object-fit:cover;display:block;max-width:100%}
+.pcard-img.contain img{object-fit:contain;height:160px;padding:8px}
+.pcard-body{padding:12px 14px}
+.pcard-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.pcard-sub{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.pcard-specs{border-top:1px solid var(--border);padding-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.spec-chip{background:var(--surface2);border-radius:6px;padding:4px 8px;font-size:10px;color:var(--text2)}
+.spec-chip strong{color:var(--text);font-weight:600}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;margin-bottom:6px;font-weight:500}
+.badge-red{background:#dce6f5;color:var(--accent2)}
+.badge-blue{background:#e8f0fe;color:#1a56db}
+.badge-green{background:#e8f5ee;color:#2d6a4f}
+.badge-orange{background:#fff0e0;color:#b35c00}
+.tip-box{background:#fffbe6;border:1px solid #f0c040;border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:11px;line-height:1.6;color:#7c5800}
+.note-green{background:var(--green-bg);border:1px solid #a8d5be;border-radius:10px;padding:10px 12px;font-size:11px;color:var(--green);line-height:1.6;margin-top:10px}
+.esec{background:var(--surface);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid var(--border)}
+.esec-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.esec-title .num{background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.clbl{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.06em;margin-bottom:5px}
+.cgrp{margin-bottom:12px}
+input[type=number],select{height:40px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:14px;font-family:inherit;padding:0 11px;width:100%;outline:none}
+input[type=number]:focus,select:focus{border-color:var(--accent2)}
+.irow{display:flex;gap:8px}.irow>div{flex:1}.travel-row{flex-wrap:wrap}.travel-row>div{min-width:160px}
+.esec-note{font-size:11px;color:var(--text2);margin-top:7px;line-height:1.6}
+.esec-note strong{font-family:'DM Mono',monospace;color:var(--text)}
+.bdown{background:var(--surface2);border-radius:10px;padding:11px;margin-top:4px}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px}
+.brow+.brow{border-top:1px solid var(--border)}
+.brow .lbl{color:var(--text2)}.brow .amt{font-family:'DM Mono',monospace;font-weight:500}
+.btotal{display:flex;justify-content:space-between;align-items:center;padding:9px 0 0;margin-top:5px;border-top:2px solid var(--accent);font-weight:700;font-size:14px}
+.btotal .amt{font-family:'DM Mono',monospace;color:var(--accent2)}
+.total-card{background:var(--accent);border-radius:12px;padding:18px;text-align:center;margin-top:10px}
+.total-card .lbl{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:5px}
+.total-card .price{font-size:34px;font-weight:700;color:#fff;font-family:'DM Mono',monospace}
+.total-card .sub{font-size:11px;color:rgba(255,255,255,.55);margin-top:5px}
+.float-chat-launcher{position:fixed;right:18px;bottom:72px;z-index:500;display:flex;align-items:center;gap:10px;min-height:52px;border:0;border-radius:999px;background:#7c3d58;color:#fff;padding:8px 16px 8px 10px;box-shadow:0 12px 32px rgba(26,26,46,.28);font-weight:700;cursor:pointer}
+.float-chat-launcher img{width:38px;height:38px;object-fit:contain}
+.float-chat-launcher.hidden{display:none}
+.float-chat-panel{position:fixed;right:16px;bottom:84px;z-index:600;width:min(420px,calc(100vw - 32px));height:min(680px,calc(100dvh - 108px));overflow:hidden;border:1px solid rgba(26,26,46,.16);border-radius:10px;background:#fff;box-shadow:0 20px 60px rgba(26,26,46,.30);transform:translateY(12px);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
+.float-chat-panel.open{transform:translateY(0);opacity:1;pointer-events:auto}
+.float-chat-panel iframe{display:block;width:100%;height:100%;border:0}
+.float-chat-close{position:absolute;top:8px;right:8px;z-index:2;width:34px;height:34px;border:0;border-radius:8px;background:rgba(255,255,255,.92);color:#2a2226;font-size:22px;line-height:1;box-shadow:0 4px 14px rgba(42,34,38,.14);cursor:pointer}
+@media (max-width:720px){.float-chat-launcher{right:12px;bottom:68px;min-height:48px;padding-right:14px}.float-chat-panel{inset:0;width:auto;height:auto;border-radius:0}}
+@media (max-width:720px){
+  html,body{height:auto;min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  #app{position:relative;min-height:100dvh;display:block;padding-bottom:74px}
+  #content{display:block}
+  .page.active{position:relative;top:auto;left:auto;right:auto;bottom:auto;overflow:visible;min-height:auto}
+  nav.main-nav{position:fixed;bottom:0;left:0;right:0}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+  <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="21"/></svg></div>
+  <h1>ガラス修理計算ソフト</h1>
+  <span class="version">v8.7</span>
+</header>
+<div id="content">
+
+<!-- 製品一覧 -->
+<div id="p-catalog" class="page">
+  <div class="cat-tabs" id="cat-tabs">
+    <button class="cat-btn active" onclick="showCat('tanban',this)">単板ガラス</button>
+    <button class="cat-btn" onclick="showCat('moso',this)">複層ガラス</button>
+    <button class="cat-btn" onclick="showCat('lowe',this)">Low-E複層</button>
+    <button class="cat-btn" onclick="showCat('kino',this)">機能・特殊</button>
+    <button class="cat-btn" onclick="showCat('kagami',this)">鏡</button>
+  </div>
+
+  <!-- 単板 -->
+  <div id="cat-tanban" class="cat-content active">
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-blue">最多使用</div>
+        <div class="pcard-title">フロートガラス 透明（FL）</div>
+        <div class="pcard-sub">いわゆる透明ガラス。溶かしたスズの上にガラス融液を浮かせて製造。住宅窓には3mmと5mmが最多使用。内部木製建具には2mmが使われることも。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">厚み <strong>2・3・5・6・8mm〜</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">3mm最大 <strong>2,540×1,905mm</strong></div>
+          <div class="spec-chip">5mm最大 <strong>3,810×2,540mm</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-orange">要確認</div>
+        <div class="pcard-title">型ガラス（F4A / F6A）</div>
+        <div class="pcard-sub">片側がデコボコ。お客様が「くもりガラス」と言ったらデコボコかザラザラか確認！デコボコ面は室内側に。2mm型は廃盤→ポリカ使用。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">厚み <strong>4mm・6mm</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">4mm最大 <strong>1,829×914mm</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-orange">要確認</div>
+        <div class="pcard-title">摺ガラス（G3 / G5）</div>
+        <div class="pcard-sub">片側がザラザラ。水回りは型ガラス推奨（汚れが取れにくいため）。水に濡れると透明度が増す。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">厚み <strong>2・3・5mm</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">3mm最大 <strong>1,829×914mm</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body" style="padding-bottom:8px">
+        <div class="pcard-title">網入りガラス（PW6.8 / FW6.8）</div>
+        <div class="pcard-sub">防火・飛散防止性能あり。法規上定められた箇所に使用義務。直射日光で熱割れに注意。<strong>発注時は網の形状を必ず記載。</strong>透明は型より高め。</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--border)">
+        <div style="text-align:center;padding:8px 6px;border-right:1px solid var(--border)">
+          <img id="img-wire-hishi" src="" alt="菱形ワイヤー" style="width:100%;height:70px;object-fit:cover;display:block;border-radius:4px">
+          <div style="font-size:10px;font-weight:700;color:var(--text);margin-top:5px">菱形ワイヤー</div>
+          <div style="font-size:9px;color:var(--green);margin-top:2px">防火○</div>
+        </div>
+        <div style="text-align:center;padding:8px 6px;border-right:1px solid var(--border)">
+          <img id="img-wire-cross" src="" alt="クロスワイヤー" style="width:100%;height:70px;object-fit:cover;display:block;border-radius:4px">
+          <div style="font-size:10px;font-weight:700;color:var(--text);margin-top:5px">クロスワイヤー</div>
+          <div style="font-size:9px;color:var(--green);margin-top:2px">防火○</div>
+        </div>
+        <div style="text-align:center;padding:8px 6px">
+          <img id="img-wire-line" src="" alt="線入りワイヤー" style="width:100%;height:70px;object-fit:cover;display:block;border-radius:4px">
+          <div style="font-size:10px;font-weight:700;color:var(--text);margin-top:5px">線入りワイヤー</div>
+          <div style="font-size:9px;color:var(--accent2);margin-top:2px">防火×</div>
+        </div>
+      </div>
+      <div class="pcard-body" style="padding-top:10px">
+        <div class="pcard-specs">
+          <div class="spec-chip">厚み <strong>6.8mm</strong></div>
+          <div class="spec-chip">発注先 <strong>AGC硝子建材</strong></div>
+          <div class="spec-chip">最大 <strong>2,438×1,829mm</strong></div>
+          <div class="spec-chip">型（FW6.8） <strong>透明より安価</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-red">受注生産</div>
+        <div class="pcard-title">強化ガラス（PT4〜PT6 / FBT4）</div>
+        <div class="pcard-sub">普通ガラスの3〜5倍の強度。割れると粉々になりケガしにくい。防犯性能はなし。テーブル・棚板・台風対策に。納期要確認。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">厚み <strong>4・5・6mm（型4mm）</strong></div>
+          <div class="spec-chip">発注先 <strong>AGC硝子建材</strong></div>
+          <div class="spec-chip">商品名 <strong>テンパライト</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 複層 -->
+  <div id="cat-moso" class="cat-content">
+    <div class="tip-box">複層ガラスは全て受注生産品です。納期がかかることを必ずお客様へお伝えください。片側だけの修理は不可です。</div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-red">受注生産</div>
+        <div class="pcard-title">一般複層ガラス（ペアマルチ）</div>
+        <div class="pcard-sub">2枚のガラスの間に乾燥空気を封入。一枚ガラスの約2倍の断熱性能。古い住宅の断熱化に最適。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">主な構成 <strong>3mm+A+3mm 他</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">断熱 <strong>一枚の約2倍</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Low-E -->
+  <div id="cat-lowe" class="cat-content">
+    <div class="tip-box">全て受注生産品。「南面→日射取得型（スーパー）」「西面→日射遮蔽型（レイボーグ）」が基本の使い分けです。</div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-green">断熱重視</div>
+        <div class="pcard-title">ペアマルチスーパー（日射取得型）</div>
+        <div class="pcard-sub">室内側Low-E膜。日射熱を室内に取り込みながら暖房熱を反射。断熱性能は一枚の約3.3倍。冬場に活躍。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">主な構成 <strong>3mm透明+A+LowE3</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">断熱 <strong>一枚の約3.3倍</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-orange">遮熱重視</div>
+        <div class="pcard-title">ペアマルチレイボーグ（日射遮蔽型）</div>
+        <div class="pcard-sub">室外側Low-E膜。日射熱を約60%カット。遮熱性能は一枚の約5倍。夏冬両対応。注意：冬の日差しも遮断するため南面には不向き。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">主な構成 <strong>LowE3+A+3mm透明</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">遮熱 <strong>一枚の約5倍</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 機能・特殊 -->
+  <div id="cat-kino" class="cat-content">
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-red">受注生産</div>
+        <div class="pcard-title">真空ガラス（スペーシア）</div>
+        <div class="pcard-sub">フロートの約4倍・ペアマルチの約2倍の断熱性能。6.2mmの薄さで単板サッシへ入れ替え可能。結露抑制効果も。外気温-23℃まで結露しない。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">厚み <strong>6.2mm</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">断熱 <strong>一枚の約4倍</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-red">受注生産 CP認定品</div>
+        <div class="pcard-title">防犯ガラス（セキュオ）</div>
+        <div class="pcard-sub">中間膜やポリカで「こじ破り」「打ち破り」を防止。30（安価・こじ破り対策）→60（標準・おすすめ）→SP（最強・単板サッシOK）の順。90は需要不明。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">種類 <strong>30mil / 60mil / 90mil / SP</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">単板サッシ <strong>30・60・SP対応</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-red">受注生産</div>
+        <div class="pcard-title">合わせガラス（ラミペーン）</div>
+        <div class="pcard-sub">紫外線カット率99%以上・飛散防止性能。カラーラミペーンは5色展開。家具の色褪せ対策に最適。学校・病院など幅広い場所で使用。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">主な構成 <strong>3mm+中間膜15mil+3mm</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">カラー <strong>クリア・グレー・ホワイト他</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="badge badge-red">受注生産</div>
+        <div class="pcard-title">防音ガラス（ソノグラス）</div>
+        <div class="pcard-sub">防音特殊中間膜で音域全体をカバー。6.8mmで単板サッシ入れ替え可。内窓との組み合わせでさらに効果大。遮音コスパはソノグラスが一番。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">主な構成 <strong>3mm+遮音膜30mil+3mm</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">厚み <strong>6.8mm（単板サッシOK）</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 鏡 -->
+  <div id="cat-kagami" class="cat-content">
+    <div class="tip-box">洗面所→TED（簡易防湿）、浴室→OC（防湿）が基本の使い分けです。「曇らない鏡」は存在しないので「防曇鏡」を案内してください。</div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="pcard-title">鏡（5mm・各仕上げ）</div>
+        <div class="pcard-sub">フロートガラスの片面に銀膜を塗布。湿気で黒く変色するため水回りには防湿加工品を使用。</div>
+        <div class="pcard-specs">
+          <div class="spec-chip">切放し <strong>加工のみ</strong></div>
+          <div class="spec-chip">4方磨き <strong>姿見・額向け</strong></div>
+          <div class="spec-chip">TED <strong>洗面所向け</strong></div>
+          <div class="spec-chip">OC防湿 <strong>浴室向け</strong></div>
+          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
+          <div class="spec-chip">最大 <strong>3,048×1,829mm</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="pcard">
+      <div class="pcard-body">
+        <div class="pcard-title">防湿加工の比較（TED vs 無加工）</div>
+        <div class="pcard-sub">左：防湿加工なし　右：TED加工。水回りでは防湿加工品を必ず使用してください。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 見積もり -->
+<div id="p-estimate" class="page active">
+  <div class="page-inner">
+
+    <div class="esec" id="sec-main" style="border-left:3px solid var(--accent2)">
+      <div class="esec-title"><span class="num">①</span>ガラス代（1枚目）</div>
+
+      <div class="cgrp" style="margin-bottom:6px">
+        <div class="clbl">計算方法</div>
+        <div style="display:flex;gap:8px">
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+            <input type="radio" name="main-mode" value="shaku" checked onchange="switchMainMode('shaku')" style="accent-color:var(--accent2)">在庫・尺寸
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+            <input type="radio" name="main-mode" value="sqm" onchange="switchMainMode('sqm')" style="accent-color:var(--accent2)">仕入れ・㎡
+          </label>
+        </div>
+      </div>
+
+      <!-- 在庫・尺寸モード -->
+      <div id="sec-shaku">
+        <div class="cgrp"><div class="clbl">品種</div>
+          <select id="e-type" onchange="calcEst();calcAcc();calcTravel();">
+            <optgroup label="── 単板ガラス ──">
+              <option value="fl3">3mm透明（FL3）</option>
+              <option value="fl2">2mm透明（FL2）</option>
+              <option value="fl5">5mm透明（FL5）</option>
+              <option value="f4a">4mm型（F4A）</option>
+              <option value="polka">2mmワーロン</option>
+              <option value="g3">3mm摺（G3）</option>
+              <option value="g2">2mm摺（G2）</option>
+            </optgroup>
+            <optgroup label="── 網入りガラス ──">
+              <option value="ami_t">6.8mm網入り透明（PW6.8）</option>
+              <option value="ami_k">6.8mm網入り型（FW6.8）</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="cgrp">
+          <div class="irow">
+            <div><div class="clbl">W（幅）mm</div><input type="number" id="e-w" value="0" min="1" inputmode="numeric" oninput="calcEst();"></div>
+            <div><div class="clbl">H（高さ）mm</div><input type="number" id="e-h" value="0" min="1" inputmode="numeric" oninput="calcEst();"></div>
+          </div>
+        </div>
+        <div class="cgrp" style="margin-top:6px"><div class="clbl">枚数</div>
+          <input type="number" id="e-count-shaku" value="1" min="1" max="99" inputmode="numeric" oninput="calcEst();">
+        </div>
+        <div class="esec-note">適用範囲：<span id="e-glass-range">—</span>　→　<strong id="e-glass-price">—</strong></div>
+        <div class="esec-note">小計：<strong id="e-glass-total">—</strong></div>
+      </div>
+
+      <!-- 仕入れ・㎡モード（初期非表示） -->
+      <div id="sec-sqm" style="display:none">
+        <div class="cgrp"><div class="clbl">品種</div>
+          <select id="o-type" onchange="calcOrder(false);calcAcc();calcTravel();">
+            <optgroup label="── フロートガラス ──">
+              <option value="fl3">3mm透明（FL3）</option>
+              <option value="fl5">5mm透明（FL5）</option>
+              <option value="fl6">6mm透明（FL6）</option>
+              <option value="fl8">8mm透明（FL8）</option>
+            </optgroup>
+            <optgroup label="── 型・摺・網入り ──">
+              <option value="f4a_m">4mm型（F4A）</option>
+              <option value="f6a">6mm型（F6A）</option>
+              <option value="g3_m">3mm摺（G3）</option>
+              <option value="g5">5mm摺（G5）</option>
+              <option value="pw68">6.8mm網入り透明</option>
+              <option value="fw68">6.8mm網入り型</option>
+            </optgroup>
+            <optgroup label="── 強化ガラス ──">
+              <option value="pt4">4mm透明強化（PT4）</option>
+              <option value="pt5">5mm透明強化（PT5）</option>
+              <option value="pt6">6mm透明強化（PT6）</option>
+              <option value="fbt4">4mm型強化（FBT4）</option>
+            </optgroup>
+            <optgroup label="── 複層ガラス ──">
+              <option value="ap6d">ペアマルチ 3mm透明+A+3mm透明（AP6-D）</option>
+              <option value="ap10d">ペアマルチ 5mm透明+A+5mm透明（AP10-D）</option>
+              <option value="ap3f4d">ペアマルチ 3mm透明+A+4mm型（AP3F4-D）</option>
+              <option value="ap3pwd">ペアマルチ 網入り透明+A+3mm透明（AP3PW-D）</option>
+              <option value="ap3fwd">ペアマルチ 網入り型+A+3mm透明（AP3FW-D）</option>
+            </optgroup>
+            <optgroup label="── ペアマルチスーパー ──">
+              <option value="arsp3">スーパー 3mm透明+A+LowE3</option>
+              <option value="arsp5">スーパー 5mm透明+A+LowE5</option>
+              <option value="arsp_f4">スーパー 4mm型+A+LowE3</option>
+              <option value="arsp_pw">スーパー 網入り透明+A+LowE3</option>
+              <option value="arsp_fw">スーパー 網入り型+A+LowE3</option>
+            </optgroup>
+            <optgroup label="── ペアマルチレイボーグ ──">
+              <option value="arspj3">レイボーグ LowE3+A+3mm透明</option>
+              <option value="arspj5">レイボーグ LowE5+A+5mm透明</option>
+              <option value="arspj_f4">レイボーグ LowE3+A+4mm型</option>
+              <option value="arspj_pw">レイボーグ LowE3+A+網入り透明</option>
+              <option value="arspj_fw">レイボーグ LowE3+A+網入り型</option>
+            </optgroup>
+            <optgroup label="── 防犯ガラス セキュオ ──">
+              <option value="lp6_30">セキュオ30 3mm透明+30mil+3mm透明（LP6-30）</option>
+              <option value="lp3f3a_30">セキュオ30 3mm透明+30mil+3mm型（LP3F3A-30）</option>
+              <option value="lp5t_60">セキュオ60 2.5mm透明+60mil+2.5mm透明（LP5T-60）</option>
+              <option value="lp2f3a_60">セキュオ60 2mm透明+60mil+3mm型（LP2F3A-60）</option>
+              <option value="lp5t_sp">セキュオSP 2.5mm透明+ポリカ+2.5mm透明（LP5T-SP）</option>
+              <option value="lp2f3a_sp">セキュオSP 2mm透明+ポリカ+3mm型（LP2F3A-SP）</option>
+            </optgroup>
+            <optgroup label="── 合わせガラス ──">
+              <option value="lp6z">ラミペーン 3mm透明+15mil+3mm透明（LP6-Z）</option>
+              <option value="lp2f4az">ラミペーン 2mm透明+30mil+4mm型（LP2F4A-Z）</option>
+              <option value="l4p6z">カラーラミペーン 3mm透明+15mil+3mm透明（L4P6-Z）</option>
+              <option value="l4lp2f4az">カラーラミペーン 2mm透明+30mil+4mm型（L4LP2F4A-Z）</option>
+            </optgroup>
+            <optgroup label="── 真空ガラス ──">
+              <option value="vnp3lep3">スペーシア Low-E3mm+真空層+3mm透明</option>
+              <option value="vnp3leg3">スペーシア Low-E3mm+真空層+3mm摺</option>
+            </optgroup>
+            <optgroup label="── 防音ガラス ──">
+              <option value="l51p6z">ソノグラス 3mm透明+遮音膜30mil+3mm透明（L51P6-Z）</option>
+              <option value="l51p2f4az">ソノグラス 2mm透明+遮音膜30mil+4mm型（L51P2F4A-Z）</option>
+            </optgroup>
+            <optgroup label="── 鏡 ──">
+              <option value="mirror_cut">5mm鏡 切放し</option>
+              <option value="mirror_4h">5mm鏡 4方磨き</option>
+              <option value="mirror_ted">5mm鏡 TED簡易防湿</option>
+              <option value="mirror_oc">5mm鏡 OC防湿</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="cgrp">
+          <div class="irow">
+            <div><div class="clbl">面積（㎡）</div><input type="number" id="o-area" value="0" min="0.001" step="0.001" inputmode="decimal" oninput="calcOrder(false)"></div>
+            <div id="o-gretchan-wrap" style="display:none"><div class="clbl">グレチャン</div>
+              <select id="o-gretchan" onchange="calcOrder(false)" style="height:40px">
+                <option value="0">なし</option>
+                <option value="1">あり</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="cgrp" style="margin-top:6px"><div class="clbl">枚数</div>
+          <input type="number" id="e-count-sqm" value="1" min="1" max="99" inputmode="numeric" oninput="calcOrder(false);">
+        </div>
+        <div class="esec-note">単価：<strong id="o-unit">—</strong></div>
+        <div class="esec-note">小計：<strong id="o-total-price">—</strong></div>
+      </div>
+    </div>
+
+    <!-- 追加ガラス行コンテナ -->
+    <div id="extra-glass-rows"></div>
+
+    <!-- ガラスを追加ボタン -->
+    <button id="add-glass-btn" onclick="addGlassRow()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:4px 0 8px;padding:12px;border:2px dashed var(--border);border-radius:12px;background:transparent;color:var(--text2);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent2)';this.style.color='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      ガラスを追加する
+    </button>
+
+    <!-- 追加ガラス行コンテナ -->
+    <div id="extra-glass-rows"></div>
+
+    <!-- ガラスを追加ボタン -->
+    <button id="add-glass-btn" onclick="addGlassRow()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:4px 0 8px;padding:12px;border:2px dashed var(--border);border-radius:12px;background:transparent;color:var(--text2);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent2)';this.style.color='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      ガラスを追加する
+    </button>
+
+    <div class="esec">
+      <div class="esec-title"><span class="num">③</span>出張・施工費</div>
+      <div class="cgrp">
+        <div class="irow travel-row">
+          <div><div class="clbl">片道（分）</div><input type="number" id="e-travel" value="0" min="0" max="90" inputmode="numeric" oninput="calcTravel();"></div>
+          <div><div class="clbl">施工時間（分）</div><input type="number" id="e-work" value="0" min="0" inputmode="numeric" oninput="calcTravel();"></div>
+          <div><div class="clbl">人工</div><input type="number" id="e-labor" value="1" min="0" step="1" inputmode="numeric" oninput="calcTravel();"></div>
+        </div>
+      </div>
+      <div class="esec-note">出張費：<strong id="e-travel-price">—</strong>　／　施工費：<strong id="e-work-price">—</strong></div>
+    </div>
+    <div class="esec">
+      <div class="esec-title"><span class="num">④</span>廃材搬出・処分費</div>
+      <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="e-waste" value="1" min="0" max="20" inputmode="numeric" oninput="const w=parseInt(this.value)||0;updateWasteUI(w);recalcTotal();"></div>
+      <div id="waste-rule-tanban" class="esec-note">処分費：<strong id="e-waste-price">—</strong>　（3枚まで500円、4枚目から+100円/枚）</div>
+      <div id="waste-rule-kino" class="esec-note" style="display:none">処分費：<strong id="e-waste-price-kino">—</strong>　（300円/枚）</div>
+    </div>
+    <div id="extra-waste-rows"></div>
+    <button id="add-waste-btn" onclick="addExtraWasteRow()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:4px 0 8px;padding:12px;border:2px dashed var(--border);border-radius:12px;background:transparent;color:var(--text2);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s" onmouseover="this.style.borderColor='var(--accent2)';this.style.color='var(--accent2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      ＋処分費を追加する
+    </button>
+    <div class="esec">
+      <div class="esec-title"><span class="num">⑤</span>付属品</div>
+
+      <!-- コーキング（プルダウン） -->
+      <div class="cgrp">
+        <div class="clbl">コーキング種類</div>
+        <select id="acc-caulk-type" onchange="calcAcc()">
+          <option value="0">なし</option>
+          <option value="600">単板G・パネル（通常） 6×6 — ¥600/m</option>
+          <option value="600">単板G・パネル（防カビ） 6×6 — ¥600/m</option>
+          <option value="900">単板G・パネル（防火） 6×6 — ¥900/m</option>
+          <option value="1100">単板G（セメダイン） 6×6 — ¥1,100/m</option>
+          <option value="850">単板G（三角シール） 15×8 — ¥850/m</option>
+          <option value="700">複層G（通常） 8×8 — ¥700/m</option>
+          <option value="1300">複層G（防火） 8×8 — ¥1,300/m</option>
+          <option value="700">ポリカ板 6×6 — ¥700/m</option>
+          <option value="900">アルミ（変成） 6×6 — ¥900/m</option>
+          <option value="2600">単板G（ハイクリア） 10×10 — ¥2,600/m</option>
+        </select>
+      </div>
+      <div class="cgrp" id="acc-caulk-len-wrap" style="display:none">
+        <div class="irow">
+          <div><div class="clbl">長さ（m）</div><input type="number" id="acc-caulk-len" value="1" min="0.1" step="0.1" inputmode="decimal" oninput="calcAcc()"></div>
+          <div><div class="clbl">本数</div><input type="number" id="acc-caulk-count" value="1" min="1" max="99" inputmode="numeric" oninput="calcAcc()"></div>
+        </div>
+        <div class="esec-note" style="margin-top:6px">コーキング代：<strong id="acc-caulk-price">—</strong></div>
+      </div>
+
+      <!-- その他付属品 チェックリスト -->
+      <div class="clbl" style="margin-top:10px;margin-bottom:6px">その他付属品</div>
+      <div id="acc-items" style="display:flex;flex-direction:column;gap:6px">
+        <!-- 各行：チェック + ラベル + 数量 + 小計 -->
+      </div>
+      <div class="esec-note" style="margin-top:8px">付属品合計：<strong id="acc-total-price">—</strong></div>
+    </div>
+
+    <div class="bdown">
+      <div id="b-glass-rows">
+        <div class="brow" id="b-glass-row"><span class="lbl">①ガラス代（在庫）</span><span class="amt" id="b-glass">—</span></div>
+        <div id="b-glass-detail" style="display:none;flex-direction:column"></div>
+        <div class="brow" id="b-order-row"><span class="lbl">②ガラス代（仕入れ）</span><span class="amt" id="b-order">—</span></div>
+        <div id="b-order-detail" style="display:none;flex-direction:column"></div>
+      </div>
+      <div class="brow"><span class="lbl">③出張費</span><span class="amt" id="b-travel">—</span></div>
+      <div class="brow"><span class="lbl">③施工費</span><span class="amt" id="b-work">—</span></div>
+      <div class="brow"><span class="lbl">④廃材処分費</span><span class="amt" id="b-waste">—</span></div>
+      <div class="brow" id="b-delivery-row" style="display:none"><span class="lbl">メーカー配送料</span><span class="amt" id="b-delivery">—</span></div>
+      <div class="brow"><span class="lbl">⑤付属品</span><span class="amt" id="b-acc">—</span></div>
+      <div id="b-acc-detail" style="display:none;flex-direction:column;gap:0"></div>
+      <div class="brow"><span class="lbl" id="misc-label">⑥諸経費（5%・最低2,000円）</span><span class="amt" id="b-misc">—</span></div>
+      <div class="btotal"><span>合計（税別）</span><span class="amt" id="b-total">—</span></div>
+    </div>
+    <div class="total-card">
+      <div class="lbl">お見積り金額（税別）</div>
+      <div style="font-size:16px;color:rgba(255,255,255,0.6);font-family:'DM Mono',monospace;margin-bottom:4px" id="e-total">—</div>
+      <div class="lbl" style="margin-top:8px;font-size:12px">税込金額</div>
+      <div style="font-size:36px;font-weight:700;color:#fff;font-family:'DM Mono',monospace;letter-spacing:-0.02em" id="e-tax">—</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+<nav class="main-nav">
+  <div class="main-indicator" id="main-ind"></div>
+  <button class="mnav-btn" onclick="showPage('p-catalog',0)" style="display:none">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>製品一覧
+  </button>
+  <button class="mnav-btn active" onclick="showPage('p-estimate',0)">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>見積もり
+  </button>
+</nav>
+</div>
+
+<button class="float-chat-launcher" id="floatChatLauncher" type="button" aria-controls="floatChatPanel" aria-expanded="false">
+  <img src="float-chat/assets/float-icon.png" alt="">
+  <span>フロートに相談</span>
+</button>
+<section class="float-chat-panel" id="floatChatPanel" aria-label="フロート相談室">
+  <button class="float-chat-close" id="floatChatClose" type="button" aria-label="チャットを閉じる">×</button>
+  <iframe title="フロート相談室" src="float-chat/index.html"></iframe>
+</section>
+
+<script>
+
+const stockData={
+  fl3:{cols:[303,455,914,1219,1829],rows:[303,455,914,1219,1829],prices:[[1400,1400,1400,2000,2900],[1400,1400,2200,2900,4400],[1400,2200,4400,5900,8800],[2000,2900,5900,7800,11700],[2900,4400,8800,11700,17600]]},
+  fl2:{cols:[303,455,914],rows:[303,455,914],prices:[[1500,1500,1500],[1500,1500,1500],[1500,1500,2900]]},
+  fl5:{cols:[303,455,914,1219,1829,2134,2438],rows:[303,455,914,1219,1829,2134,2438],prices:[[2000,2000,2100,2800,4200,4900,5600],[2000,2000,3200,4200,6300,7400,8400],[2100,3200,6300,8500,12700,14800,16900],[2800,4200,8500,11300,16900,19700,22600],[4200,6300,12700,16900,25400,29600,33800],[4900,7400,14800,19700,29600,null,null],[5600,8400,16900,22600,33800,null,null]]},
+  f4a:{cols:[303,455,914,1219,1829],rows:[303,455,914,1219,1829],prices:[[2400,2400,2600,3400,5100],[2400,2400,3800,5100,7700],[2600,3800,7700,10300,15400],[3400,5100,10300,13700,20500],[5100,7700,15400,20500,30800]]},
+  polka:{cols:[303,455,914],rows:[303,455,914],prices:[[3000,3000,3600],[3000,3000,5400],[4000,6000,6000]]},
+  g3:{cols:[303,455,914,1219,1829],rows:[303,455,914,1219,1829],prices:[[5200,5200,5600,7400,11100],[5200,5200,8400,11200,16700],[5600,8400,16800,22400,33600],[7400,11200,22400,29900,44800],[11100,16700,33600,44800,67200]]},
+  g2:{cols:[303,455,914],rows:[303,455,914],prices:[[1600,1600,1600],[1600,1600,1600],[1600,1600,3200]]},
+  // 網入りガラス（W幅別の固定価格）
+  ami_t_606:{fixed:null},ami_t_914:{fixed:null},
+  ami_t_1219:{fixed:20000},ami_t_1829:{fixed:29900},ami_t_2438:{fixed:39900},
+  ami_k_606:{fixed:null},ami_k_914:{fixed:null},
+  ami_k_1219:{fixed:11100},ami_k_1829:{fixed:16600},ami_k_2438:{fixed:22200},
+};
+// 網入り価格テーブル（H×W）
+const amiTData={
+  ami_t:{cols:[606,914,1219,1829,2438],rows:[606,914,1219,1829,2438],
+    prices:[[9900,20000,20000,29900,39900],[20000,22600,30100,45200,60200],[20000,30100,40100,60200,80300],[29900,45200,60200,90300,120400],[39900,60200,80300,120400,null]]},
+  ami_k:{cols:[606,914,1219,1829,2438],rows:[606,914,1219,1829,2438],
+    prices:[[5500,11100,11100,16600,22200],[11100,12500,16700,25100,33400],[11100,16700,22300,33500,44600],[16600,25100,33500,50200,66900],[22200,33400,44600,66900,null]]},
+};
+const travelTbl=[[5,1000],[10,2000],[15,2000],[20,2000],[25,4000],[30,4000],[35,4000],[40,6000],[45,6000],[50,6000],[55,8000],[60,8000],[65,8000],[70,10000],[75,10000],[80,10000],[85,12000],[90,12000]];
+const workTbl=[[35,2000],[50,3000],[60,4000],[75,5000],[95,6000],[110,7000],[120,8000]];
+const workKinoTbl=[[15,2000],[35,3000],[50,4000],[60,5000],[75,6000],[95,7000],[110,8000],[120,10000]];
+function lookup(tbl,val){if(val<=0)return 0;for(let i=0;i<tbl.length;i++)if(val<=tbl[i][0])return tbl[i][1];return null;}
+function getLaborCount(){return Math.max(0,parseInt(document.getElementById('e-labor')?.value)||0);}
+function getTravelPrice(minutes){
+  const base=lookup(travelTbl,minutes);
+  return base==null?null:ceil100(base*getLaborCount());
+}
+function getWorkPrice(minutes){
+  const base=lookup(getWorkTbl(),minutes);
+  return base==null?null:ceil100(base*getLaborCount());
+}
+function getWorkTbl(){return isTanbanWorkType()?workTbl:workKinoTbl;}
+function findIdx(arr,val){for(let i=0;i<arr.length;i++)if(val<=arr[i])return i;return -1;}
+function fmt(n){return n!=null?'¥'+n.toLocaleString():'—';}
+function setBaseGlassTotal(total){
+  const el=document.getElementById('b-glass');
+  const value=total!=null&&total>0?total:0;
+  el.dataset.base=String(value);
+  el.textContent=value>0?fmt(value):'—';
+}
+function setBaseOrderTotal(total){
+  const el=document.getElementById('b-order');
+  const value=total!=null&&total>0?total:0;
+  el.dataset.base=String(value);
+  el.textContent=value>0?fmt(value):'—';
+}
+function ceil100(n){return Math.ceil(n/100)*100;}
+function ceil10(n){return Math.ceil(n/10)*10;}
+function getGlass(type,w,h){
+  const d=stockData[type];if(!d)return{price:null,range:'対応品種なし'};
+  const sizeErr=checkStockSize(type,w,h);
+  const ci=findIdx(d.cols,w),ri=findIdx(d.rows,h);
+  if(ci<0||ri<0)return{price:null,range:'範囲外'+(sizeErr?` ⚠ 製作可能寸法ご確認ください`:'')};
+  const p=d.prices[ri][ci];if(p==null)return{price:null,range:'該当なし'};
+  const wl=ci===0?`W≤${d.cols[0]}`:`W${d.cols[ci-1]+1}〜${d.cols[ci]}`;
+  const hl=ri===0?`H≤${d.rows[0]}`:`H${d.rows[ri-1]+1}〜${d.rows[ri]}`;
+  const note=sizeErr?` ⚠ 製作可能寸法ご確認ください`:'';
+  return{price:p,range:`${wl}mm / ${hl}mm${note}`};
+}
+// 単板ガラス判定
+const tanbanTypes=['fl3','fl2','fl5','f4a','polka','g3','g2'];
+const tanbanOrderTypes=['fl3','fl5','fl6','fl8','f4a_m','f6a','g3_m','g5'];
+const kinoOrderTypes=['pt4', 'pt5', 'pt6', 'fbt4', 'ap6d', 'ap10d', 'ap3f4d', 'ap3pwd', 'ap3fwd', 'arsp3', 'arsp5', 'arsp_f4', 'arsp_pw', 'arsp_fw', 'arspj3', 'arspj5', 'arspj_f4', 'arspj_pw', 'arspj_fw', 'lp6_30', 'lp3f3a_30', 'lp5t_60', 'lp2f3a_60', 'lp5t_sp', 'lp2f3a_sp', 'lp6z', 'lp2f4az', 'l4p6z', 'l4lp2f4az', 'vnp3lep3', 'vnp3leg3', 'l51p6z', 'l51p2f4az', 'pw68', 'fw68'];
+
+const S={glass:0,order:0,travel:0,work:0,waste:0,delivery:0,acc:0};
+
+function recalcGlassTotal(){
+  // 在庫(b-glass)と仕入れ(b-order)を合算してガラス合計を更新
+  const parse=s=>s==='—'?0:parseInt(s.replace(/[¥,]/g,''))||0;
+  const glassEl=document.getElementById('b-glass');
+  const orderEl=document.getElementById('b-order');
+  const g=glassEl.dataset.base!=null?parseInt(glassEl.dataset.base)||0:parse(glassEl.textContent);
+  const o=orderEl.dataset.base!=null?parseInt(orderEl.dataset.base)||0:parse(orderEl.textContent);
+  S.glass=g; S.order=o;
+  recalcTotal();
+}
+
+
+const stockSizeMax={
+  fl2:{w:1219,h:864},
+  fl3:{w:2540,h:1905},
+  fl5:{w:3810,h:2540},
+  f4a:{w:1829,h:914},
+  g2:{w:914,h:813},
+  g3:{w:1829,h:914},
+  polka:{w:914,h:914},
+};
+const sqmSizeLimits={
+  fl3:{maxW:2540,maxH:1905,minW:null,minH:null},
+  fl5:{maxW:3810,maxH:2540,minW:null,minH:null},
+  fl6:{maxW:3810,maxH:2540,minW:null,minH:null},
+  fl8:{maxW:7420,maxH:2720,minW:null,minH:null},
+  f4a_m:{maxW:1829,maxH:914,minW:null,minH:null},
+  f6a:{maxW:2540,maxH:1905,minW:null,minH:null},
+  g3_m:{maxW:1829,maxH:914,minW:null,minH:null},
+  g5:{maxW:1829,maxH:1219,minW:null,minH:null},
+  pw68:{maxW:2438,maxH:1829,minW:null,minH:null},
+  fw68:{maxW:2438,maxH:1829,minW:null,minH:null},
+  pt4:{maxW:2400,maxH:1200,minW:250,minH:100},
+  pt5:{maxW:2600,maxH:1800,minW:250,minH:100},
+  pt6:{maxW:3600,maxH:2440,minW:250,minH:100},
+  fbt4:{maxW:2400,maxH:1200,minW:250,minH:100},
+  ap6d:{maxW:2418,maxH:1885,minW:350,minH:200},
+  ap10d:{maxW:3780,maxH:2510,minW:350,minH:200},
+  ap3f4d:{maxW:3710,maxH:2440,minW:350,minH:200},
+  ap3pwd:{maxW:2418,maxH:1885,minW:350,minH:200},
+  ap3fwd:{maxW:2415,maxH:1729,minW:350,minH:200},
+  arsp3:{maxW:2418,maxH:1758,minW:350,minH:200},
+  arsp5:{maxW:2408,maxH:1748,minW:350,minH:200},
+  arsp_f4:{maxW:2418,maxH:1758,minW:350,minH:200},
+  arsp_pw:{maxW:2418,maxH:1758,minW:350,minH:200},
+  arsp_fw:{maxW:2415,maxH:1729,minW:350,minH:200},
+  arspj3:{maxW:2418,maxH:1758,minW:350,minH:200},
+  arspj5:{maxW:2408,maxH:1748,minW:350,minH:200},
+  arspj_f4:{maxW:2418,maxH:1758,minW:350,minH:200},
+  arspj_pw:{maxW:2418,maxH:1758,minW:350,minH:200},
+  arspj_fw:{maxW:2415,maxH:1729,minW:350,minH:200},
+  lp6_30:{maxW:2540,maxH:1885,minW:100,minH:100},
+  lp3f3a_30:{maxW:2400,maxH:1850,minW:100,minH:100},
+  lp5t_60:{maxW:2400,maxH:1850,minW:100,minH:100},
+  lp2f3a_60:{maxW:2400,maxH:1850,minW:100,minH:100},
+  lp5t_sp:{maxW:2130,maxH:1235,minW:300,minH:200},
+  lp2f3a_sp:{maxW:1800,maxH:1200,minW:300,minH:200},
+  lp6z:{maxW:2540,maxH:1885,minW:100,minH:100},
+  lp2f4az:{maxW:1800,maxH:1200,minW:100,minH:100},
+  l4p6z:{maxW:2540,maxH:1219,minW:100,minH:100},
+  l4lp2f4az:{maxW:1800,maxH:1200,minW:100,minH:100},
+  vnp3lep3:{maxW:2400,maxH:1500,minW:335,minH:120},
+  vnp3leg3:{maxW:1800,maxH:1200,minW:335,minH:120},
+  l51p6z:{maxW:2540,maxH:1885,minW:100,minH:100},
+  l51p2f4az:{maxW:1800,maxH:1200,minW:100,minH:100},
+  mirror_cut:{maxW:3048,maxH:1829,minW:null,minH:null},
+  mirror_4h: {maxW:3048,maxH:1829,minW:null,minH:null},
+  mirror_ted:{maxW:3048,maxH:1829,minW:null,minH:null},
+  mirror_oc: {maxW:3048,maxH:1829,minW:null,minH:null},
+};
+
+function checkStockSize(type,w,h){
+  const lim=stockSizeMax[type];
+  if(!lim) return null;
+  if(lim.w&&w>lim.w) return `W最大${lim.w}mm超過`;
+  if(lim.h&&h>lim.h) return `H最大${lim.h}mm超過`;
+  return null;
+}
+function getSqmSizeNote(type){
+  const lim=sqmSizeLimits[type];
+  if(!lim) return '';
+  const parts=[];
+  if(lim.maxW&&lim.maxH) parts.push(`最大${lim.maxW}×${lim.maxH}mm`);
+  if(lim.minW&&lim.minH) parts.push(`最小${lim.minW}×${lim.minH}mm`);
+  return parts.join(' / ');
+}
+
+function getActiveMainMode(){
+  const checked=document.querySelector('input[name="main-mode"]:checked');
+  if(checked) return checked.value;
+  const sqmSec=document.getElementById('sec-sqm');
+  return sqmSec&&sqmSec.style.display!=='none'?'sqm':mainMode;
+}
+
+function isKino(){
+  if(getActiveMainMode()==='shaku'){
+    const v=document.getElementById('e-type').value;
+    return v.startsWith('ami_')||!tanbanTypes.includes(v);
+  }
+  return kinoOrderTypes.includes(document.getElementById('o-type').value);
+}
+
+function isTanbanWasteType(){
+  if(getActiveMainMode()==='shaku'){
+    const v=document.getElementById('e-type').value;
+    return tanbanTypes.includes(v)||v.startsWith('mirror_');
+  }
+  const v=document.getElementById('o-type').value;
+  return tanbanOrderTypes.includes(v)||v.startsWith('mirror_');
+}
+
+function isExtraTanbanWasteType(row){
+  if(!row) return true;
+  if(row.mode==='shaku'){
+    const v=document.getElementById('ex-type-'+row.id)?.value||'';
+    return tanbanTypes.includes(v)||v.startsWith('mirror_');
+  }
+  const v=document.getElementById('ex-otype-'+row.id)?.value||'';
+  return tanbanOrderTypes.includes(v)||v.startsWith('mirror_');
+}
+
+function isTanbanWorkType(){
+  if(!isTanbanWasteType()) return false;
+  return extraRows.every(row=>isExtraTanbanWasteType(row));
+}
+
+function calcWastePrice(count,isTanban){
+  if(count<=0) return 0;
+  return isTanban?(count<=3?500:500+(count-3)*100):count*300;
+}
+
+function getExtraWasteTotal(){
+  return extraWasteRows.reduce((sum,row)=>sum+(row.waste||0),0);
+}
+
+function updateWasteSummary(baseWaste){
+  const total=(baseWaste||0)+getExtraWasteTotal();
+  document.getElementById('b-waste').textContent=fmt(total);
+  S.waste=total||0;
+}
+
+function isSqmActive(){
+  return getActiveMainMode()==='sqm';
+}
+
+function getAmiPrice(typeBase, w, h){
+  const d=amiTData[typeBase];
+  if(!d) return{price:null,range:'データなし'};
+  const ci=findIdx(d.cols,w),ri=findIdx(d.rows,h);
+  if(ci<0||ri<0) return{price:null,range:'範囲外'};
+  const p=d.prices[ri][ci];
+  if(p==null) return{price:null,range:'該当なし'};
+  const wl=`W≤${d.cols[ci]}mm`,hl=`H≤${d.rows[ri]}mm`;
+  return{price:p,range:`${wl} / ${hl}`};
+}
+
+function calcEst(){
+  const type=document.getElementById('e-type').value;
+  const w=parseInt(document.getElementById('e-w').value)||0;
+  const h=parseInt(document.getElementById('e-h').value)||0;
+  const count=parseInt(document.getElementById('e-count-shaku').value)||1;
+  const tMin=parseInt(document.getElementById('e-travel').value)||0;
+  const wMin=parseInt(document.getElementById('e-work').value)||0;
+  const waste=parseInt(document.getElementById('e-waste').value)||1;
+
+  let price=null,range='—';
+  if(type==='ami_t'){
+    const r=getAmiPrice('ami_t',w,h);price=r.price;range=r.range;
+  } else if(type==='ami_k'){
+    const r=getAmiPrice('ami_k',w,h);price=r.price;range=r.range;
+  } else {
+    const g=getGlass(type,w,h);price=g.price;range=g.range;
+  }
+  document.getElementById('e-glass-range').textContent=range;
+  document.getElementById('e-glass-price').textContent=fmt(price);
+  const glassTotal=price!=null?price*count:null;
+  document.getElementById('e-glass-total').textContent=fmt(glassTotal);
+
+  const tp=getTravelPrice(tMin),wp=getWorkPrice(wMin);
+  document.getElementById('e-travel-price').textContent=fmt(tp);
+  document.getElementById('e-work-price').textContent=fmt(wp);
+  setBaseGlassTotal(glassTotal);
+  document.getElementById('b-travel').textContent=fmt(tp);
+  document.getElementById('b-work').textContent=fmt(wp);
+
+  updateWasteUI(waste);
+  recalcGlassTotal();
+}
+
+function setActiveSection(which){
+  const s1=document.getElementById('sec-shaku');
+  const s2=document.getElementById('sec-sqm');
+  if(which==='shaku'){
+    s1.classList.remove('disabled');s1.style.opacity='1';s1.style.pointerEvents='auto';
+    s2.classList.add('disabled');s2.style.opacity='0.4';s2.style.pointerEvents='none';
+  } else {
+    s2.classList.remove('disabled');s2.style.opacity='1';s2.style.pointerEvents='auto';
+    s1.classList.add('disabled');s1.style.opacity='0.4';s1.style.pointerEvents='none';
+  }
+}
+
+function clearShaku(){
+  // ②を選んだとき①をリセット＆グレーアウト
+  setActiveSection('sqm');
+  setBaseGlassTotal(null);
+  document.getElementById('e-glass-range').textContent='—';
+  document.getElementById('e-glass-price').textContent='—';
+}
+
+function clearSqm(){
+  // ①を選んだとき②をリセット＆グレーアウト
+  setActiveSection('shaku');
+  setBaseOrderTotal(null);
+  document.getElementById('o-unit').textContent='—';
+  document.getElementById('o-total-price').textContent='—';
+}
+
+function updateWasteUI(waste){
+  const kino=isKino();
+  const tanbanWaste=isTanbanWasteType();
+  const sqm=isSqmActive();
+  const tanbanEl=document.getElementById('waste-rule-tanban');
+  const kinoEl=document.getElementById('waste-rule-kino');
+  const deliveryRow=document.getElementById('b-delivery-row');
+  const miscLabel=document.getElementById('misc-label');
+  let wasteP;
+  if(tanbanWaste){
+    wasteP=calcWastePrice(waste,true);
+    tanbanEl.style.display='';kinoEl.style.display='none';
+    document.getElementById('e-waste-price').textContent=fmt(wasteP);
+    // ㎡モードで面積が入力済みの場合は配送料6,000円を表示
+    const area=parseFloat(document.getElementById('o-area')?.value)||0;
+    if(sqm&&area>0){
+      deliveryRow.style.display='';
+      document.getElementById('b-delivery').textContent='¥6,000';
+      S.delivery=6000;
+      miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+    } else {
+      deliveryRow.style.display='none';
+      document.getElementById('b-delivery').textContent='—';
+      S.delivery=0;
+      miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
+    }
+  } else {
+    wasteP=calcWastePrice(waste,false);
+    tanbanEl.style.display='none';kinoEl.style.display='';
+    document.getElementById('e-waste-price-kino').textContent=fmt(wasteP);
+    // ㎡出し選択時はメーカー送料6,000円を表示
+    if(sqm){
+      deliveryRow.style.display='';
+      document.getElementById('b-delivery').textContent='¥6,000';
+      S.delivery=6000;
+      miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+    } else {
+      deliveryRow.style.display='none';
+      document.getElementById('b-delivery').textContent='—';
+      S.delivery=0;
+      miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
+    }
+  }
+  S.baseWaste=wasteP||0;
+  updateWasteSummary(S.baseWaste);
+  return wasteP;
+}
+
+function recalcTotal(){
+  const parse=s=>s==='—'?0:parseInt(s.replace(/[¥,]/g,''))||0;
+  const glass=parse(document.getElementById('b-glass').textContent);
+  const order=parse(document.getElementById('b-order').textContent);
+  const travel=parse(document.getElementById('b-travel').textContent);
+  const work=parse(document.getElementById('b-work').textContent);
+  const waste=parse(document.getElementById('b-waste').textContent);
+  const delivery=parse(document.getElementById('b-delivery').textContent);
+  const tMin=parseInt(document.getElementById('e-travel').value)||0;
+  const wMin=parseInt(document.getElementById('e-work').value)||0;
+  const tp=getTravelPrice(tMin),wp=getWorkPrice(wMin);
+  const acc=parse(document.getElementById('b-acc')?.textContent||'—');
+  if(tp===null||wp===null){
+    document.getElementById('b-misc').textContent='—';
+    document.getElementById('b-total').textContent='—';
+    document.getElementById('e-total').textContent='—';
+    document.getElementById('e-tax').textContent='税込：—';
+    return;
+  }
+  const sub=glass+order+travel+work+waste+delivery+acc;
+  const miscRaw=sub*0.05;
+  const miscCeil=Math.ceil(miscRaw/100)*100;  // 100円単位切り上げ
+  const misc=Math.max(2000,miscCeil);
+  const total=sub+misc;
+  document.getElementById('b-misc').textContent=fmt(misc);
+  document.getElementById('b-total').textContent=fmt(total);
+  document.getElementById('e-total').textContent=fmt(total)+'（税別）';
+  document.getElementById('e-tax').textContent=fmt(Math.round(total*1.1));
+}
+// 仕入れガラス価格データ（単価テーブル）
+// 形式: [最大面積, 単価] or [最大面積, 単価_グレチャンなし, 単価_グレチャンあり]
+const orderData={
+  // フロート（sheet=0.1㎡以下枚単価、sqmTbl=㎡テーブル）
+  fl3:{sheet:600,  sqmTbl:[[0.2,5700],[2.275,4400],[4.598,4400],[9999,null]]},
+  fl5:{sheet:900,  sqmTbl:[[0.2,8300],[2.275,6400],[4.598,6400],[7.013,null],[9999,null]]},
+  fl6:{sheet:1200, sqmTbl:[[0.2,11200],[2.275,8600],[4.598,8600],[7.013,null],[9999,null]]},
+  fl8:{sheet:1700, sqmTbl:[[0.2,16700],[2.275,12900],[4.598,14200],[7.013,null],[9999,null]]},
+  // 型・摺・網入り
+  f4a_m:{sheet:1000, sqmTbl:[[0.2,10000],[2.275,7700],[4.598,7700],[9999,null]]},
+  f6a:  {sheet:1800, sqmTbl:[[0.2,17800],[2.275,13700],[4.598,13700],[9999,null]]},
+  g3_m: {sheet:2200, sqmTbl:[[0.2,21800],[2.275,16800],[9999,null]]},
+  g5:   {sheet:3700, sqmTbl:[[0.2,36900],[2.275,28400],[9999,null]]},
+  pw68:[[0.2,22500],[2.275,22500],[4.598,25000],[9999,null]],
+  fw68:[[0.2,12500],[2.275,12500],[4.598,13800],[9999,null]],
+  // 強化ガラス（枚単価 or ㎡単価）
+  pt4:{sheet:4400,sqm:11300},
+  pt5:{sheet:4900,sqm:12500},
+  pt6:{sheet:6900,sqm:17500},
+  fbt4:{sheet:9800,sqm:25000},
+  // ペアマルチ（グレチャンなし/あり）
+  ap6d:{g0:[[0.3,6900],[4,17600],[9999,null]],g1:[[0.3,7900],[4,20100],[9999,null]]},
+  ap10d:{g0:[[0.3,12500],[4,31900],[9999,null]],g1:[[0.3,13400],[4,34400],[9999,null]]},
+  ap3f4d:{g0:[[0.3,7200],[4,18400],[9999,null]],g1:[[0.3,8200],[4,20900],[9999,null]]},
+  ap3pwd:{g0:[[0.3,21000],[4,53800],[9999,null]],g1:[[0.3,22000],[4,56300],[9999,null]]},
+  ap3fwd:{g0:[[0.3,13900],[4,35700],[9999,null]],g1:[[0.3,14900],[4,38200],[9999,null]]},
+  // ペアマルチスーパー
+  arsp3:{g0:[[0.3,10600],[4,27100],[9999,null]],g1:[[0.3,11600],[4,29600],[9999,null]]},
+  arsp5:{g0:[[0.3,15800],[4,40300],[9999,null]],g1:[[0.3,16700],[4,42800],[9999,null]]},
+  arsp_f4:{g0:[[0.3,11700],[4,29800],[9999,null]],g1:[[0.3,12600],[4,32300],[9999,null]]},
+  arsp_pw:{g0:[[0.3,22500],[4,57600],[9999,null]],g1:[[0.3,23500],[4,60100],[9999,null]]},
+  arsp_fw:{g0:[[0.3,16400],[4,42100],[9999,null]],g1:[[0.3,17400],[4,44600],[9999,null]]},
+  // ペアマルチレイボーグ
+  arspj3:{g0:[[0.3,11800],[4,30200],[9999,null]],g1:[[0.3,12800],[4,32700],[9999,null]]},
+  arspj5:{g0:[[0.3,17500],[4,44800],[9999,null]],g1:[[0.3,18500],[4,47300],[9999,null]]},
+  arspj_f4:{g0:[[0.3,12900],[4,33100],[9999,null]],g1:[[0.3,13900],[4,35600],[9999,null]]},
+  arspj_pw:{g0:[[0.3,23800],[4,60900],[9999,null]],g1:[[0.3,24800],[4,63400],[9999,null]]},
+  arspj_fw:{g0:[[0.3,17700],[4,45400],[9999,null]],g1:[[0.3,18700],[4,47900],[9999,null]]},
+  // セキュオ（枚/㎡/4㎡〜）
+  lp6_30:{s:13100,m:33500,l:42800},
+  lp3f3a_30:{s:14400,m:36700,l:46900},
+  lp5t_60:{s:15100,m:38600,l:49400},
+  lp2f3a_60:{s:16300,m:41600,l:null},
+  lp5t_sp:{s:29000,m:74200,l:null},
+  lp2f3a_sp:{s:31800,m:81400,l:null},
+  // ラミペーン
+  lp6z:{s:11300,m:28900},
+  lp2f4az:{s:11900,m:30500},
+  l4p6z:{s:11900,m:30500},
+  l4lp2f4az:{s:13500,m:34400},
+  // スペーシア
+  vnp3lep3:{s:21200,m:48200},
+  vnp3leg3:{s:21600,m:48400},
+  // ソノグラス
+  l51p6z:{s:14900,m:38100},
+  l51p2f4az:{s:15700,m:40200},
+  // 鏡（切放しは枚単価なし、他は枚単価あり）
+  mirror_cut: {sheet:null, sqmTbl:[[0.2,26600],[2.275,20400],[4.598,20400],[9999,null]]},
+  mirror_4h:  {sheet:3500, sqmTbl:[[0.2,34800],[2.275,26800],[4.598,26800],[9999,null]]},
+  mirror_ted: {sheet:4500, sqmTbl:[[0.2,44600],[2.275,34300],[4.598,34300],[9999,null]]},
+  mirror_oc:  {sheet:5700, sqmTbl:[[0.2,56200],[2.275,43200],[4.598,43200],[9999,null]]},
+};
+
+const gretchanTypes=['ap6d','ap10d','ap3f4d','ap3pwd','ap3fwd','arsp3','arsp5','arsp_f4','arsp_pw','arsp_fw','arspj3','arspj5','arspj_f4','arspj_pw','arspj_fw'];
+const kyokaTypes=['pt4','pt5','pt6','fbt4'];
+const secuoTypes=['lp6_30','lp3f3a_30','lp5t_60','lp2f3a_60','lp5t_sp','lp2f3a_sp'];
+const lamiTypes=['lp6z','lp2f4az','l4p6z','l4lp2f4az','vnp3lep3','vnp3leg3','l51p6z','l51p2f4az'];
+
+function calcOrder(userAction=false){
+  // ユーザー操作時だけ排他制御
+  if(userAction) clearShaku();
+
+  const type=document.getElementById('o-type').value;
+  const area=parseFloat(document.getElementById('o-area').value)||0;
+  const gc=parseInt(document.getElementById('o-gretchan').value)||0;
+  const d=orderData[type];
+  const unitEl=document.getElementById('o-unit');
+  const totalEl=document.getElementById('o-total-price');
+  const gcWrap=document.getElementById('o-gretchan-wrap');
+  const sizeNote=getSqmSizeNote(type);
+  const noteStr=sizeNote?`　[${sizeNote}]`:'';
+
+  // グレチャン選択の表示切替
+  gcWrap.style.display=gretchanTypes.includes(type)?'block':'none';
+
+  // 面積未入力の場合は何も計算しない
+  if(area<=0){
+    unitEl.textContent='—';
+    totalEl.textContent='—';
+    setBaseOrderTotal(null);
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+
+  if(!d){unitEl.textContent='—';totalEl.textContent='—';return;}
+
+  // 強化ガラス（枚/㎡）
+  if(kyokaTypes.includes(type)){
+    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    const unit=area<=0.3?d.sheet:d.sqm;
+    const total=area<=0.3?d.sheet*count:ceil100(d.sqm*area*count);
+    unitEl.textContent=area<=0.3?fmt(d.sheet)+'/枚'+noteStr:fmt(d.sqm)+'/㎡';
+    totalEl.textContent=fmt(total)+(count>1?` (${count}枚)`:'');
+    setBaseOrderTotal(total);
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+  // セキュオ（枚/㎡/4㎡〜）
+  if(secuoTypes.includes(type)){
+    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    let unit,total;
+    if(area<=0.3){unit=d.s;total=d.s*count;}
+    else if(area<=4){unit=d.m;total=ceil100(d.m*area*count);}
+    else{unit=d.l;total=d.l?ceil100(d.l*area*count):null;}
+    unitEl.textContent=area<=0.3?fmt(unit)+'/枚'+noteStr:fmt(unit)+'/㎡';
+    totalEl.textContent=fmt(total)+(count>1?` (${count}枚)`:'');
+    setBaseOrderTotal(total);
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+  // ラミペーン・スペーシア・ソノグラス（枚/㎡）
+  if(lamiTypes.includes(type)){
+    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    if(area>4){
+      unitEl.textContent='範囲外';
+      totalEl.textContent='—';
+      setBaseOrderTotal(null);
+      const waste=parseInt(document.getElementById('e-waste').value)||1;
+      updateWasteUI(waste);recalcGlassTotal();return;
+    }
+    const unit=area<=0.3?d.s:d.m;
+    const total=area<=0.3?d.s*count:ceil100(d.m*area*count);
+    unitEl.textContent=area<=0.3?fmt(d.s)+'/枚'+noteStr:fmt(d.m)+'/㎡';
+    totalEl.textContent=fmt(total)+(count>1?` (${count}枚)`:'');
+    setBaseOrderTotal(total);
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+  // ペアマルチ系（グレチャンあり/なし）
+  if(gretchanTypes.includes(type)){
+    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    const tbl=gc===1?d.g1:d.g0;
+    let unit=null;
+    for(const [max,p] of tbl){if(area<=max){unit=p;break;}}
+    if(!unit){unitEl.textContent='範囲外';totalEl.textContent='—';setBaseOrderTotal(null);const w0=parseInt(document.getElementById('e-waste').value)||1;updateWasteUI(w0);recalcGlassTotal();return;}
+    const isSheetPrice=area<=0.3;
+    const pairTotal=isSheetPrice?unit*count:ceil100(unit*area*count);
+    unitEl.textContent=fmt(unit)+(isSheetPrice?'/枚':'/㎡')+noteStr;
+    totalEl.textContent=fmt(pairTotal)+(count>1?` (${count}枚)`:'');
+    setBaseOrderTotal(pairTotal);
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+  // 通常㎡テーブル（sqmTbl形式 or 配列形式）
+  const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+  const tbl=d.sqmTbl||d;
+  if(type==='mirror_cut'&&area<=0.1){
+    unitEl.textContent='問い合わせ';
+    totalEl.textContent='—';
+    setBaseOrderTotal(null);
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+  // 0.1㎡以下は枚単価
+  if(area<=0.1&&d.sheet!=null){
+    const total=d.sheet*count;
+    unitEl.textContent=fmt(d.sheet)+'/枚'+noteStr;
+    totalEl.textContent=fmt(ceil100(total))+(count>1?` (${count}枚)`:'');
+    setBaseOrderTotal(ceil100(total));
+    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    updateWasteUI(waste);recalcGlassTotal();return;
+  }
+  let unit=null;
+  for(const [max,p] of tbl){if(area<=max){unit=p;break;}}
+  if(!unit){unitEl.textContent='範囲外';totalEl.textContent='—';setBaseOrderTotal(null);const w0=parseInt(document.getElementById('e-waste').value)||1;updateWasteUI(w0);recalcGlassTotal();return;}
+  const orderTotal=ceil100(Math.round(unit*area*count));
+  unitEl.textContent=fmt(unit)+'/㎡'+noteStr;
+  totalEl.textContent=fmt(orderTotal)+(count>1?` (${count}枚)`:'');
+  setBaseOrderTotal(orderTotal);
+  const waste=parseInt(document.getElementById('e-waste').value)||1;
+  updateWasteUI(waste);
+  recalcGlassTotal();
+}
+function showPage(id,idx){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.mnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const visibleBtns=[...document.querySelectorAll('.mnav-btn')].filter(b=>b.style.display!=='none');
+  if(visibleBtns[idx]) visibleBtns[idx].classList.add('active');
+  const n=visibleBtns.length;
+  const ind=document.getElementById('main-ind');
+  if(ind){ind.style.width=(100/n)+'%';ind.style.left=(100/n*idx)+'%';}
+}
+const catIds=['tanban','moso','lowe','kino','kagami'];
+function showCat(id,btn){
+  catIds.forEach(i=>{const el=document.getElementById('cat-'+i);if(el)el.classList.remove('active');});
+  document.querySelectorAll('#cat-tabs .cat-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cat-'+id).classList.add('active');btn.classList.add('active');
+}
+function calcTravel(){
+  const tMin=parseInt(document.getElementById('e-travel').value)||0;
+  const wMin=parseInt(document.getElementById('e-work').value)||0;
+  const tp=getTravelPrice(tMin),wp=getWorkPrice(wMin);
+  document.getElementById('e-travel-price').textContent=fmt(tp);
+  document.getElementById('e-work-price').textContent=fmt(wp);
+  document.getElementById('b-travel').textContent=fmt(tp);
+  document.getElementById('b-work').textContent=fmt(wp);
+  S.travel=tp||0; S.work=wp||0;
+  recalcTotal();
+}
+let extraRowId=0;
+const extraRows=[];  // {id, mode:'shaku'|'sqm', total:0, label:''}
+let extraWasteRowId=0;
+const extraWasteRows=[];
+
+const SHAKU_OPTIONS=`
+  <optgroup label="── 単板ガラス ──">
+    <option value="fl3">3mm透明（FL3）</option>
+    <option value="fl2">2mm透明（FL2）</option>
+    <option value="fl5">5mm透明（FL5）</option>
+    <option value="f4a">4mm型（F4A）</option>
+    <option value="polka">2mmワーロン</option>
+    <option value="g3">3mm摺（G3）</option>
+    <option value="g2">2mm摺（G2）</option>
+  </optgroup>
+  <optgroup label="── 網入りガラス ──">
+    <option value="ami_t">6.8mm網入り透明（PW6.8）</option>
+    <option value="ami_k">6.8mm網入り型（FW6.8）</option>
+  </optgroup>`;
+
+const SQM_OPTIONS=`
+  <optgroup label="── フロートガラス ──">
+    <option value="fl3">3mm透明（FL3）</option>
+    <option value="fl5">5mm透明（FL5）</option>
+    <option value="fl6">6mm透明（FL6）</option>
+    <option value="fl8">8mm透明（FL8）</option>
+  </optgroup>
+  <optgroup label="── 型・摺・網入り ──">
+    <option value="f4a_m">4mm型（F4A）</option>
+    <option value="f6a">6mm型（F6A）</option>
+    <option value="g3_m">3mm摺（G3）</option>
+    <option value="g5">5mm摺（G5）</option>
+    <option value="pw68">6.8mm網入り透明</option>
+    <option value="fw68">6.8mm網入り型</option>
+  </optgroup>
+  <optgroup label="── 強化ガラス ──">
+    <option value="pt4">4mm透明強化（PT4）</option>
+    <option value="pt5">5mm透明強化（PT5）</option>
+    <option value="pt6">6mm透明強化（PT6）</option>
+    <option value="fbt4">4mm型強化（FBT4）</option>
+  </optgroup>
+  <optgroup label="── 複層ガラス ──">
+    <option value="ap6d">ペアマルチ 3mm透明+A+3mm透明</option>
+    <option value="ap10d">ペアマルチ 5mm透明+A+5mm透明</option>
+    <option value="ap3f4d">ペアマルチ 3mm透明+A+4mm型</option>
+    <option value="ap3pwd">ペアマルチ 網入り透明+A+3mm透明</option>
+    <option value="ap3fwd">ペアマルチ 網入り型+A+3mm透明</option>
+  </optgroup>
+  <optgroup label="── ペアマルチスーパー ──">
+    <option value="arsp3">スーパー 3mm透明+A+LowE3</option>
+    <option value="arsp5">スーパー 5mm透明+A+LowE5</option>
+    <option value="arsp_f4">スーパー 4mm型+A+LowE3</option>
+    <option value="arsp_pw">スーパー 網入り透明+A+LowE3</option>
+    <option value="arsp_fw">スーパー 網入り型+A+LowE3</option>
+  </optgroup>
+  <optgroup label="── ペアマルチレイボーグ ──">
+    <option value="arspj3">レイボーグ LowE3+A+3mm透明</option>
+    <option value="arspj5">レイボーグ LowE5+A+5mm透明</option>
+    <option value="arspj_f4">レイボーグ LowE3+A+4mm型</option>
+    <option value="arspj_pw">レイボーグ LowE3+A+網入り透明</option>
+    <option value="arspj_fw">レイボーグ LowE3+A+網入り型</option>
+  </optgroup>
+  <optgroup label="── 防犯・合わせ・真空・防音 ──">
+    <option value="lp6_30">セキュオ30 3mm透明+30mil+3mm透明</option>
+    <option value="lp3f3a_30">セキュオ30 3mm透明+30mil+3mm型</option>
+    <option value="lp5t_60">セキュオ60 2.5mm透明+60mil+2.5mm透明</option>
+    <option value="lp2f3a_60">セキュオ60 2mm透明+60mil+3mm型</option>
+    <option value="lp5t_sp">セキュオSP 2.5mm透明+ポリカ+2.5mm透明</option>
+    <option value="lp2f3a_sp">セキュオSP 2mm透明+ポリカ+3mm型</option>
+    <option value="lp6z">ラミペーン 3mm透明+15mil+3mm透明</option>
+    <option value="lp2f4az">ラミペーン 2mm透明+30mil+4mm型</option>
+    <option value="l4p6z">カラーラミペーン 3mm透明+15mil+3mm透明</option>
+    <option value="l4lp2f4az">カラーラミペーン 2mm透明+30mil+4mm型</option>
+    <option value="vnp3lep3">スペーシア Low-E3mm+真空+3mm透明</option>
+    <option value="vnp3leg3">スペーシア Low-E3mm+真空+3mm摺</option>
+    <option value="l51p6z">ソノグラス 3mm透明+遮音膜+3mm透明</option>
+    <option value="l51p2f4az">ソノグラス 2mm透明+遮音膜+4mm型</option>
+  </optgroup>`;
+
+function addGlassRow(){
+  const id=++extraRowId;
+  extraRows.push({id, mode:'shaku', total:0, label:''});
+  const wrap=document.getElementById('extra-glass-rows');
+  const sec=document.createElement('div');
+  sec.className='esec';
+  sec.id='extra-row-'+id;
+  sec.style.borderLeft='3px solid var(--accent2)';
+  sec.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="esec-title" style="margin:0">追加ガラス ${id}</div>
+      <button onclick="removeGlassRow(${id})" style="border:none;background:none;cursor:pointer;color:var(--text2);font-size:18px;padding:2px 6px;border-radius:6px;line-height:1" title="削除">✕</button>
+    </div>
+    <div class="cgrp" style="margin-bottom:6px">
+      <div class="clbl">計算方法</div>
+      <div style="display:flex;gap:8px">
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+          <input type="radio" name="extra-mode-${id}" value="shaku" checked onchange="switchExtraMode(${id},'shaku')" style="accent-color:var(--accent2)">在庫・尺寸
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+          <input type="radio" name="extra-mode-${id}" value="sqm" onchange="switchExtraMode(${id},'sqm')" style="accent-color:var(--accent2)">仕入れ・㎡
+        </label>
+      </div>
+    </div>
+
+    <!-- 尺寸モード -->
+    <div id="extra-shaku-${id}">
+      <div class="cgrp"><div class="clbl">品種</div>
+        <select id="ex-type-${id}" onchange="calcExtraRow(${id});calcTravel();"><div class="cgrp">${SHAKU_OPTIONS}</select>
+      </div>
+      <div class="cgrp"><div class="irow">
+        <div><div class="clbl">W（幅）mm</div><input type="number" id="ex-w-${id}" value="800" min="1" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
+        <div><div class="clbl">H（高さ）mm</div><input type="number" id="ex-h-${id}" value="800" min="1" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
+      </div></div>
+      <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-cnt-shaku-${id}" value="1" min="1" max="99" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
+    </div>
+
+    <!-- ㎡モード（初期非表示） -->
+    <div id="extra-sqm-${id}" style="display:none">
+      <div class="cgrp"><div class="clbl">品種</div>
+        <select id="ex-otype-${id}" onchange="calcExtraRow(${id});calcTravel();">${SQM_OPTIONS}</select>
+      </div>
+      <div class="cgrp"><div class="irow">
+        <div><div class="clbl">面積（㎡）</div><input type="number" id="ex-area-${id}" value="0.5" min="0.001" step="0.001" inputmode="decimal" oninput="calcExtraRow(${id})"></div>
+        <div id="ex-gc-wrap-${id}" style="display:none"><div class="clbl">グレチャン</div>
+          <select id="ex-gc-${id}" onchange="calcExtraRow(${id})" style="height:40px">
+            <option value="0">なし</option><option value="1">あり</option>
+          </select>
+        </div>
+      </div></div>
+      <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-cnt-sqm-${id}" value="1" min="1" max="99" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
+    </div>
+
+    <div class="esec-note">小計：<strong id="ex-subtotal-${id}">—</strong></div>`;
+  wrap.appendChild(sec);
+  calcExtraRow(id);
+}
+
+function removeGlassRow(id){
+  const idx=extraRows.findIndex(r=>r.id===id);
+  if(idx>=0) extraRows.splice(idx,1);
+  const el=document.getElementById('extra-row-'+id);
+  if(el) el.remove();
+  recalcGlassTotal();
+  calcTravel();
+}
+
+function addExtraWasteRow(id){
+  const wrap=document.getElementById('extra-waste-rows');
+  if(!wrap) return;
+  const sec=document.createElement('div');
+  sec.className='esec';
+  sec.id='extra-waste-row-'+id;
+  sec.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="esec-title" style="margin:0"><span class="num">④</span>追加ガラス ${id} 残材搬出・処分費 (必要に応じて入れてください)</div>
+      <button onclick="removeExtraWasteRow(${id})" style="border:none;background:none;cursor:pointer;color:var(--text2);font-size:18px;padding:2px 6px;border-radius:6px;line-height:1" title="削除">×</button>
+    </div>
+    <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-waste-${id}" value="0" min="0" max="20" inputmode="numeric" oninput="updateExtraWasteRow(${id});recalcTotal();"></div>
+    <div class="esec-note">処分費：<strong id="ex-waste-price-${id}">—</strong>　<span id="ex-waste-rule-${id}"></span></div>`;
+  wrap.appendChild(sec);
+}
+
+function removeExtraWasteRow(id){
+  const row=extraRows.find(r=>r.id===id);
+  if(row){row.wasteEnabled=false;row.waste=0;}
+  const wasteEl=document.getElementById('extra-waste-row-'+id);
+  if(wasteEl) wasteEl.remove();
+  updateWasteSummary(S.baseWaste||0);
+  recalcTotal();
+}
+
+function updateExtraWasteRow(id){
+  const row=extraRows.find(r=>r.id===id);
+  if(!row) return;
+  if(row.wasteEnabled===false){
+    row.waste=0;
+    updateWasteSummary(S.baseWaste||0);
+    return;
+  }
+  const count=parseInt(document.getElementById('ex-waste-'+id)?.value)||0;
+  if(count<=0){
+    row.waste=0;
+    const priceEl=document.getElementById('ex-waste-price-'+id);
+    if(priceEl) priceEl.textContent=fmt(0);
+    updateWasteSummary(S.baseWaste||0);
+    return;
+  }
+  const isTanban=isExtraTanbanWasteType(row);
+  const price=calcWastePrice(count,isTanban);
+  row.waste=price;
+  const priceEl=document.getElementById('ex-waste-price-'+id);
+  const ruleEl=document.getElementById('ex-waste-rule-'+id);
+  if(priceEl) priceEl.textContent=fmt(price);
+  if(ruleEl) ruleEl.textContent=isTanban?'（3枚まで500円、4枚目から+100円/枚）':'（300円/枚）';
+  updateWasteSummary(S.baseWaste||0);
+}
+
+function addExtraWasteRow(){
+  const id=++extraWasteRowId;
+  extraWasteRows.push({id,waste:0});
+  const wrap=document.getElementById('extra-waste-rows');
+  if(!wrap) return;
+  const sec=document.createElement('div');
+  sec.className='esec';
+  sec.id='extra-waste-row-'+id;
+  sec.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="esec-title" style="margin:0"><span class="num">④</span>追加 処分費 ${id}</div>
+      <button onclick="removeExtraWasteRow(${id})" style="border:none;background:none;cursor:pointer;color:var(--text2);font-size:18px;padding:2px 6px;border-radius:6px;line-height:1" title="削除">×</button>
+    </div>
+    <div class="cgrp">
+      <div class="clbl">ガラス区分</div>
+      <select id="ex-waste-type-${id}" onchange="updateExtraWasteRow(${id});recalcTotal();">
+        <option value="tanban">単板ガラス（透明・型・摺・2mmワーロン・鏡）</option>
+        <option value="kino">それ以外のガラス</option>
+      </select>
+    </div>
+    <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-waste-${id}" value="0" min="0" max="20" inputmode="numeric" oninput="updateExtraWasteRow(${id});recalcTotal();"></div>
+    <div class="esec-note">処分費：<strong id="ex-waste-price-${id}">—</strong>　<span id="ex-waste-rule-${id}"></span></div>`;
+  wrap.appendChild(sec);
+  updateExtraWasteRow(id);
+  calcTravel();
+}
+
+function removeExtraWasteRow(id){
+  const idx=extraWasteRows.findIndex(r=>r.id===id);
+  if(idx>=0) extraWasteRows.splice(idx,1);
+  const wasteEl=document.getElementById('extra-waste-row-'+id);
+  if(wasteEl) wasteEl.remove();
+  updateWasteSummary(S.baseWaste||0);
+  recalcTotal();
+}
+
+function updateExtraWasteRow(id){
+  const row=extraWasteRows.find(r=>r.id===id);
+  if(!row) return;
+  const count=parseInt(document.getElementById('ex-waste-'+id)?.value)||0;
+  const isTanban=(document.getElementById('ex-waste-type-'+id)?.value||'tanban')==='tanban';
+  const price=calcWastePrice(count,isTanban);
+  row.waste=price;
+  const priceEl=document.getElementById('ex-waste-price-'+id);
+  const ruleEl=document.getElementById('ex-waste-rule-'+id);
+  if(priceEl) priceEl.textContent=fmt(price);
+  if(ruleEl) ruleEl.textContent=isTanban?'（3枚まで500円、4枚目から+100円/枚）':'（300円/枚）';
+  updateWasteSummary(S.baseWaste||0);
+}
+
+function switchExtraMode(id, mode){
+  const row=extraRows.find(r=>r.id===id);
+  if(row) row.mode=mode;
+  document.getElementById('extra-shaku-'+id).style.display=mode==='shaku'?'':'none';
+  document.getElementById('extra-sqm-'+id).style.display=mode==='sqm'?'':'none';
+  calcExtraRow(id);
+  updateExtraWasteRow(id);
+}
+
+function calcExtraRowSqm(id){
+  const type=document.getElementById('ex-otype-'+id).value;
+  const area=parseFloat(document.getElementById('ex-area-'+id).value)||0;
+  const gc=parseInt(document.getElementById('ex-gc-'+id).value)||0;
+  const count=parseInt(document.getElementById('ex-cnt-sqm-'+id).value)||1;
+  const gcWrap=document.getElementById('ex-gc-wrap-'+id);
+  gcWrap.style.display=gretchanTypes.includes(type)?'block':'none';
+  const d=orderData[type];
+  if(!d) return null;
+  let total=null, label='';
+  const sel=document.getElementById('ex-otype-'+id);
+  label=sel.options[sel.selectedIndex].text;
+  if(kyokaTypes.includes(type)){
+    total=area<=0.3?d.sheet*count:ceil100(d.sqm*area*count);
+  } else if(secuoTypes.includes(type)){
+    let u=area<=0.3?d.s:area<=4?d.m:d.l;
+    total=u?(area<=0.3?u*count:ceil100(u*area*count)):null;
+  } else if(lamiTypes.includes(type)){
+    let u=area<=0.3?d.s:d.m;
+    total=area<=0.3?u*count:ceil100(u*area*count);
+  } else if(gretchanTypes.includes(type)){
+    const tbl=gc===1?d.g1:d.g0;
+    let u=null;for(const[max,p]of tbl){if(area<=max){u=p;break;}}
+    total=u?ceil100(u*area*count):null;
+  } else {
+    // sqmTbl形式 or 配列形式
+    const tbl=d.sqmTbl||d;
+    if(type==='mirror_cut'&&area<=0.1){
+      total=null;
+      label+='（問い合わせ）';
+    } else if(area<=0.1&&d.sheet!=null){
+      total=ceil100(d.sheet*count);
+    } else if(Array.isArray(tbl)){
+      let u=null;for(const[max,p]of tbl){if(area<=max){u=p;break;}}
+      total=u?ceil100(Math.round(u*area*count)):null;
+    }
+  }
+  return{total, label, mode:'sqm'};
+}
+
+function calcExtraRowShaku(id){
+  const type=document.getElementById('ex-type-'+id).value;
+  const w=parseInt(document.getElementById('ex-w-'+id).value)||0;
+  const h=parseInt(document.getElementById('ex-h-'+id).value)||0;
+  const count=parseInt(document.getElementById('ex-cnt-shaku-'+id).value)||1;
+  const sel=document.getElementById('ex-type-'+id);
+  const label=sel.options[sel.selectedIndex].text;
+  let price=null;
+  if(type==='ami_t'){const r=getAmiPrice('ami_t',w,h);price=r.price;}
+  else if(type==='ami_k'){const r=getAmiPrice('ami_k',w,h);price=r.price;}
+  else{const g=getGlass(type,w,h);price=g.price;}
+  const total=price!=null?price*count:null;
+  return{total, label, mode:'shaku'};
+}
+
+function calcExtraRow(id){
+  const row=extraRows.find(r=>r.id===id);
+  if(!row) return;
+  const res=row.mode==='shaku'?calcExtraRowShaku(id):calcExtraRowSqm(id);
+  row.total=res&&res.total!=null?res.total:0;
+  row.label=res?res.label:'';
+  row.mode=res?res.mode:row.mode;
+  document.getElementById('ex-subtotal-'+id).textContent=res&&res.total!=null?fmt(res.total):'—';
+  updateExtraWasteRow(id);
+  recalcGlassTotal();
+  calcTravel();
+}
+
+function recalcGlassTotal(){
+  // 元の①②の金額を取得
+  const parse=s=>s==='—'?0:parseInt(s.replace(/[¥,]/g,''))||0;
+  // b-glass / b-orderは既存calcEst/calcOrderが書き込み済みの値を使う
+  // ただし内訳表示のために追加行をモード別に集計
+  const baseGlassEl=document.getElementById('b-glass');
+  const baseOrderEl=document.getElementById('b-order');
+  const shakuBase=baseGlassEl.dataset.base!=null?parseInt(baseGlassEl.dataset.base)||0:parse(baseGlassEl.textContent);
+  const sqmBase=baseOrderEl.dataset.base!=null?parseInt(baseOrderEl.dataset.base)||0:parse(baseOrderEl.textContent);
+
+  let shakuExtra=0, sqmExtra=0;
+  const shakuLines=[], sqmLines=[];
+  extraRows.forEach(r=>{
+    if(r.mode==='shaku'&&r.total>0){shakuExtra+=r.total;shakuLines.push({label:r.label+`（追加${r.id}）`,amt:r.total});}
+    if(r.mode==='sqm'&&r.total>0){sqmExtra+=r.total;sqmLines.push({label:r.label+`（追加${r.id}）`,amt:r.total});}
+  });
+
+  // 合計に追加行を加算
+  const totalGlass=shakuBase+shakuExtra;
+  const totalOrder=sqmBase+sqmExtra;
+  const glassRowEl=document.getElementById('b-glass-row');
+  const orderRowEl=document.getElementById('b-order-row');
+
+  // 追加行がある場合のみ内訳更新（ベース行の表示は既存のまま）
+  const glassDetailEl=document.getElementById('b-glass-detail');
+  if(shakuExtra>0){
+    glassDetailEl.style.display='flex';
+    glassDetailEl.innerHTML=shakuLines.map(l=>`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 16px;font-size:11px;color:var(--text2)"><span>　└ ${l.label}</span><span style="font-family:'DM Mono',monospace">${fmt(l.amt)}</span></div>`).join('');
+  } else {
+    glassDetailEl.style.display='none';glassDetailEl.innerHTML='';
+  }
+  const orderDetailEl=document.getElementById('b-order-detail');
+  if(sqmExtra>0){
+    orderDetailEl.style.display='flex';
+    orderDetailEl.innerHTML=sqmLines.map(l=>`<div style="display:flex;justify-content:space-between;padding:2px 0 2px 16px;font-size:11px;color:var(--text2)"><span>　└ ${l.label}</span><span style="font-family:'DM Mono',monospace">${fmt(l.amt)}</span></div>`).join('');
+  } else {
+    orderDetailEl.style.display='none';orderDetailEl.innerHTML='';
+  }
+
+  // b-glass / b-order を上書き（b-orderが—のときは上書きしない）
+  document.getElementById('b-glass').textContent=totalGlass>0?fmt(totalGlass):'—';
+  const orderEl=document.getElementById('b-order');
+  orderEl.textContent=totalOrder>0?fmt(totalOrder):'—';
+  glassRowEl.style.display=totalGlass>0?'flex':'none';
+  glassDetailEl.style.display=totalGlass>0&&shakuExtra>0?'flex':'none';
+  orderRowEl.style.display=totalOrder>0?'flex':'none';
+  orderDetailEl.style.display=totalOrder>0&&sqmExtra>0?'flex':'none';
+  recalcTotal();
+}
+
+const accItems=[
+  {id:'acc_clip',   label:'ガラスクリップ',       unit:'個', price:100},
+  {id:'acc_caulk_remove', label:'既存コーキング撤去', unit:'m',  price:250},
+  {id:'acc_beat',   label:'ビート交換',             unit:'m',  price:200},
+  {id:'acc_paste',  label:'パテはつり',             unit:'枚', price:1000},
+  {id:'acc_arazuri',label:'荒ズリ加工費',           unit:'m', price:500},
+  {id:'acc_film',   label:'飛散防止フィルム',       unit:'㎡', price:6000},
+  {id:'acc_rolling',label:'ローリング・ビテイ（自社）', unit:'台', price:10000},
+];
+
+// 鏡専用付属品
+const mirrorAccItems=[
+  {id:'acc_mirror_mat',   label:'鏡副資材（ミラーボンド・マット等）', unit:'枚', price:2000},
+  {id:'acc_mirror_tsume', label:'ツメ金具',                           unit:'組', price:800},
+  {id:'acc_mirror_rail',  label:'ステンレス上下レール',               unit:'組', price:8000},
+];
+
+const mirrorTypes=['mirror_cut','mirror_4h','mirror_ted','mirror_oc'];
+
+function buildAccItems(){
+  const wrap=document.getElementById('acc-items');
+  wrap.innerHTML='';
+  accItems.forEach(item=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:8px;padding:7px 10px;';
+    row.innerHTML=`
+      <input type="checkbox" id="${item.id}_chk" onchange="calcAcc()" style="width:16px;height:16px;flex-shrink:0;accent-color:var(--accent2)">
+      <label for="${item.id}_chk" style="font-size:12px;flex:1;cursor:pointer;line-height:1.3">${item.label}<br><span style="font-size:10px;color:var(--text2)">¥${item.price.toLocaleString()}/${item.unit}</span></label>
+      <input type="number" id="${item.id}_qty" value="1" min="${item.unit==='㎡'||item.unit==='m'?'0.1':'1'}" max="999" inputmode="${item.unit==='㎡'||item.unit==='m'?'decimal':'numeric'}" step="${item.unit==='㎡'||item.unit==='m'?'0.1':'1'}" oninput="calcAcc()" style="width:58px;height:34px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
+      <span style="font-size:10px;color:var(--text2);flex-shrink:0">${item.unit}</span>
+      <span id="${item.id}_sub" style="font-size:12px;font-family:'DM Mono',monospace;min-width:52px;text-align:right;color:var(--text2)">—</span>`;
+    wrap.appendChild(row);
+  });
+  // 鏡付属品セクション
+  const mirrorSec=document.createElement('div');
+  mirrorSec.id='mirror-acc-sec';
+  mirrorSec.style.display='none';
+  mirrorSec.innerHTML=`<div class="clbl" style="margin-top:10px;margin-bottom:6px;color:var(--accent2)">鏡 取付部材</div>`;
+  mirrorAccItems.forEach(item=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:8px;padding:7px 10px;';
+    row.innerHTML=`
+      <input type="checkbox" id="${item.id}_chk" onchange="calcAcc()" style="width:16px;height:16px;flex-shrink:0;accent-color:var(--accent2)">
+      <label for="${item.id}_chk" style="font-size:12px;flex:1;cursor:pointer;line-height:1.3">${item.label}<br><span style="font-size:10px;color:var(--text2)">¥${item.price.toLocaleString()}/${item.unit}</span></label>
+      <input type="number" id="${item.id}_qty" value="1" min="1" max="999" inputmode="numeric" step="1" oninput="calcAcc()" style="width:58px;height:34px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
+      <span style="font-size:10px;color:var(--text2);flex-shrink:0">${item.unit}</span>
+      <span id="${item.id}_sub" style="font-size:12px;font-family:'DM Mono',monospace;min-width:52px;text-align:right;color:var(--text2)">—</span>`;
+    mirrorSec.appendChild(row);
+  });
+  wrap.appendChild(mirrorSec);
+}
+
+function calcAcc(){
+  // 鏡付属品セクション表示切替
+  const mirrorSec=document.getElementById('mirror-acc-sec');
+  const shakuType=document.getElementById('e-type')?.value||'';
+  const sqmType=document.getElementById('o-type')?.value||'';
+  const showMirror=(mainMode==='shaku'&&mirrorTypes.includes(shakuType))||(mainMode==='sqm'&&mirrorTypes.includes(sqmType));
+  if(mirrorSec) mirrorSec.style.display=showMirror?'block':'none';
+  // コーキング
+  const caulkSel=document.getElementById('acc-caulk-type');
+  const caulkPrice=parseInt(caulkSel.value)||0;
+  const caulkWrap=document.getElementById('acc-caulk-len-wrap');
+  caulkWrap.style.display=caulkPrice>0?'block':'none';
+  let caulkTotal=0;
+  if(caulkPrice>0){
+    const len=parseFloat(document.getElementById('acc-caulk-len').value)||0;
+    const cnt=parseInt(document.getElementById('acc-caulk-count').value)||1;
+    caulkTotal=ceil10(caulkPrice*len*cnt);
+    document.getElementById('acc-caulk-price').textContent=fmt(caulkTotal);
+  }
+  // その他付属品
+  let itemsTotal=0;
+  const detailLines=[];
+  accItems.forEach(item=>{
+    const chk=document.getElementById(item.id+'_chk');
+    if(!chk) return;
+    const qty=parseFloat(document.getElementById(item.id+'_qty').value)||1;
+    const sub=chk.checked?ceil10(item.price*qty):0;
+    const subEl=document.getElementById(item.id+'_sub');
+    subEl.textContent=chk.checked?fmt(sub):'—';
+    subEl.style.color=chk.checked?'var(--text)':'var(--text2)';
+    if(chk.checked&&sub>0) detailLines.push({label:item.label,amt:sub});
+    itemsTotal+=sub;
+  });
+  // 鏡付属品
+  mirrorAccItems.forEach(item=>{
+    const chk=document.getElementById(item.id+'_chk');
+    if(!chk) return;
+    const qty=parseFloat(document.getElementById(item.id+'_qty').value)||1;
+    const sub=showMirror&&chk.checked?ceil10(item.price*qty):0;
+    const subEl=document.getElementById(item.id+'_sub');
+    subEl.textContent=chk.checked?fmt(sub):'—';
+    subEl.style.color=chk.checked?'var(--text)':'var(--text2)';
+    if(chk.checked&&sub>0) detailLines.push({label:item.label,amt:sub});
+    itemsTotal+=sub;
+  });
+  const total=caulkTotal+itemsTotal;
+  document.getElementById('acc-total-price').textContent=total>0?fmt(total):'—';
+  document.getElementById('b-acc').textContent=total>0?fmt(total):'—';
+  recalcTotal();
+}
+
+// 初期状態：両セクションを有効に
+let mainMode='shaku';
+
+function switchMainMode(mode){
+  mainMode=mode;
+  const s1=document.getElementById('sec-shaku');
+  const s2=document.getElementById('sec-sqm');
+  if(mode==='shaku'){
+    s1.style.display='block';
+    s2.style.display='none';
+    clearSqm();
+  } else {
+    s1.style.display='none';
+    s2.style.display='block';
+    clearShaku();
+    calcOrder(false);
+  }
+  calcAcc();
+  calcTravel();
+}
+const _s1=document.getElementById('sec-shaku');
+const _s2=document.getElementById('sec-sqm');
+_s1.style.display='block';_s1.style.opacity='1';_s1.style.pointerEvents='auto';_s1.classList.remove('disabled');
+_s2.style.display='none';_s2.style.opacity='1';_s2.style.pointerEvents='auto';_s2.classList.remove('disabled');
+buildAccItems();calcEst();calcOrder();calcAcc();calcTravel();recalcGlassTotal();
+const visibleBtns=[...document.querySelectorAll('.mnav-btn')].filter(b=>b.style.display!=='none');
+const n=visibleBtns.length;
+const ind=document.getElementById('main-ind');
+if(ind){ind.style.width=(100/n)+'%';ind.style.left='0%';}
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+(function(){
+  const launcher=document.getElementById('floatChatLauncher');
+  const panel=document.getElementById('floatChatPanel');
+  const close=document.getElementById('floatChatClose');
+  if(!launcher||!panel||!close) return;
+  function setOpen(open){
+    panel.classList.toggle('open',open);
+    launcher.classList.toggle('hidden',open);
+    launcher.setAttribute('aria-expanded',open?'true':'false');
+  }
+  launcher.addEventListener('click',()=>setOpen(!panel.classList.contains('open')));
+  close.addEventListener('click',()=>setOpen(false));
+  document.addEventListener('keydown',(event)=>{if(event.key==='Escape')setOpen(false);});
+})();
+
+
+</script>
+</body>
+</html>

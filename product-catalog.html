@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>商品カタログ確認ページ</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #2a2226;
+        --muted: #766a70;
+        --line: #e7dde1;
+        --wine: #9d4566;
+        --paper: #fff8fb;
+        --panel: rgba(255, 255, 255, 0.93);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: url("assets/background.jpg") center / cover fixed no-repeat;
+        color: var(--ink);
+        font-family: "Yu Gothic UI", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+        line-height: 1.75;
+      }
+
+      main {
+        width: min(920px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      .back {
+        display: inline-block;
+        margin-bottom: 14px;
+        color: var(--wine);
+        font-weight: 800;
+      }
+
+      .sheet {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 18px 48px rgba(80, 55, 68, 0.14);
+      }
+
+      header {
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--line);
+        background: var(--paper);
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(24px, 6vw, 40px);
+        color: var(--wine);
+      }
+
+      header p {
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      section {
+        padding: 22px 24px;
+      }
+
+      section + section {
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 1.25em;
+      }
+
+      .source {
+        color: var(--muted);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        margin-top: 14px;
+        padding: 0 16px;
+        border-radius: 8px;
+        background: var(--wine);
+        color: #fff;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .catalog-image-wrap {
+        display: grid;
+        gap: 16px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 10px;
+      }
+
+      .catalog-image {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back" href="index.html">← フロート相談室に戻る</a>
+      <article class="sheet">
+        <header>
+          <h1 id="productName">商品名</h1>
+          <p id="productCategory">カテゴリ</p>
+        </header>
+        <section>
+          <h2>どんなガラス？</h2>
+          <p id="summary"></p>
+        </section>
+        <section id="catalogImageSection" hidden>
+          <h2>カタログページ画像</h2>
+          <div class="catalog-image-wrap" id="catalogImages"></div>
+        </section>
+        <section>
+          <h2>特徴</h2>
+          <ul id="features"></ul>
+        </section>
+        <section>
+          <h2>おすすめの場所</h2>
+          <ul id="uses"></ul>
+        </section>
+        <section>
+          <h2>性能・注意点</h2>
+          <ul id="notes"></ul>
+        </section>
+        <section>
+          <h2>参照</h2>
+          <p class="source" id="source"></p>
+          <a class="button" id="catalogLink" href="catalog.pdf" target="_blank" rel="noopener">PDFの該当ページを開く</a>
+        </section>
+      </article>
+    </main>
+
+    <script>
+      const productCatalog = {
+        spacea: {
+          name: "スペーシア",
+          category: "真空ガラス",
+          summary: "2枚のガラスの間に真空層を作り、Low-E膜と組み合わせることで高い断熱性を持たせた真空ガラスです。",
+          features: ["真空層とLow-E膜で高い断熱性能を持ちます。", "単板ガラス用サッシに納まりやすく、既存住宅の窓改修に使いやすい。", "遮音効果もあり、JIS等級T-2相当の記載があります。"],
+          uses: ["住宅の窓の断熱改修", "冬の暖房負荷を下げたい場所", "結露を軽減したい開口部"],
+          notes: ["フロート板ガラスの約4倍、一般複層ガラスの約2倍の断熱性能と説明されています。", "耐風圧強度、熱割れ、品種、厚さ、面積の検討が必要です。"],
+          source: "日本板硝子 商品カタログ P.18-19",
+          pdfHref: "catalog.pdf#page=1",
+          catalogImages: ["catalog image/spacia-1.png", "catalog image/spacia-2.png"]
+        },
+        "spacea-cool": {
+          name: "スペーシア クール",
+          category: "真空ガラス",
+          summary: "スペーシアの断熱性に遮熱高断熱Low-E膜を加え、夏の日射熱も抑えやすくした真空ガラスです。",
+          features: ["真空層とLow-E膜で断熱と遮熱を両立しやすい。", "夏の日射熱を反射し、冬は暖房負荷の軽減にも役立ちます。", "紫外線カット、遮音、結露軽減も特徴です。"],
+          uses: ["夏の暑さを抑えたい住宅窓", "断熱と遮熱の両方を重視する窓", "既存サッシを活かした窓改修"],
+          notes: ["日射熱を約51%、紫外線を約61%カットと説明されています。", "色調は実物サンプルで確認することが推奨されています。"],
+          source: "日本板硝子 商品カタログ P.20-21",
+          pdfHref: "catalog.pdf#page=3",
+          catalogImages: ["catalog image/spacia cool-1.png", "catalog image/sonoglass-2.png"]
+        },
+        "float-glass": {
+          name: "透明ガラス（フロートガラス）",
+          category: "板ガラス",
+          summary: "透明でゆがみが少なく、窓やショーケースなど幅広く使える基本の板ガラスです。",
+          features: ["平滑性に優れ、透視像や反射像が得やすい。", "一般建築、店舗、住宅、高層建築などの内外装に使いやすい。", "機能ガラスのベースとしても使われる。"],
+          uses: ["住宅や店舗の窓", "ショーケース、ディスプレイ、家具、額縁", "透明に見せたい開口部"],
+          notes: ["呼び厚さは2、3、5、6、8、10、12、15、19ミリの記載があります。", "断熱、防犯、防音などの専用性能が必要な場合は、別商品と比較します。"],
+          source: "日本板硝子 商品カタログ P.105",
+          pdfHref: "catalog.pdf#page=88",
+          catalogImages: ["catalog image/float glass.png"]
+        },
+        "patterned-glass": {
+          name: "型ガラス",
+          category: "板ガラス",
+          summary: "表面の型模様で視線をぼかしながら、光を入れられる目隠し用のガラスです。",
+          features: ["ロールの型模様を転写した板ガラス。", "採光しながら視線をさえぎりたい場所に使いやすい。", "一般的には「かすみ」柄がよく使われます。"],
+          uses: ["浴室、洗面所、トイレ", "玄関まわり", "採光と目隠しを両立したい場所"],
+          notes: ["型ガラスは4ミリ、6ミリのかすみ柄の記載があります。", "防犯や断熱が必要な場合は、別商品も検討します。"],
+          source: "日本板硝子 商品カタログ P.106",
+          pdfHref: "catalog.pdf#page=89",
+          catalogImages: ["catalog image/kata suri glass.png"]
+        },
+        "frosted-glass": {
+          name: "すりガラス（摺ガラス）",
+          category: "板ガラス",
+          summary: "透明ガラスの片面を白っぽく不透明に加工した、やわらかくぼかす目隠し用のガラスです。",
+          features: ["片面を不透明に加工した板ガラス。", "全体的に白っぽく、落ち着いた見え方になります。", "間仕切りや建具などに使いやすい。"],
+          uses: ["間仕切り、建具", "白くやわらかくぼかしたい窓まわり", "落ち着いた雰囲気にしたい場所"],
+          notes: ["すりガラスは3ミリ、5ミリの記載があります。", "水に濡れると透けやすくなることがあるため、浴室では型ガラスの方が扱いやすい場合があります。"],
+          source: "日本板硝子 商品カタログ P.106",
+          pdfHref: "catalog.pdf#page=89",
+          catalogImages: ["catalog image/kata suri glass.png"]
+        },
+        "wired-glass": {
+          name: "網入りガラス",
+          category: "網入りガラス・線入りガラス",
+          summary: "ガラスの中に金網や金属線を封入し、防火や飛散低減を目的に使うガラスです。",
+          features: ["ヒシワイヤとクロスワイヤは金網を封入した網入板ガラス。", "プロテックスは金属線を封入した線入板ガラス。", "ヒシワイヤとクロスワイヤは防火、プロテックスは飛散低減が主な目的です。"],
+          uses: ["延焼のおそれのある開口部", "トップライト", "防煙垂れ壁など"],
+          notes: ["主な呼び厚さは6.8ミリ、磨ヒシワイヤには10ミリの記載があります。", "防犯ガラスではないため、侵入対策ならセキュオと分けて考えます。"],
+          source: "AGC 網入りガラスカタログ",
+          pdfHref: "",
+          catalogImages: ["catalog image/wird glass-1.png"]
+        },
+        "tempered-glass": {
+          name: "強化ガラス",
+          category: "強化ガラス",
+          summary: "通常の板ガラスより強度を高め、割れた時に細かい粒状になりやすい安全性重視のガラスです。",
+          features: ["テンパライトは透明タイプ、ミストロンエースは視線を遮る型板タイプ。", "同じ呼び厚さの板ガラスより高い耐風圧強度を持ちます。", "破損時に鋭利な破片が生じにくい。"],
+          uses: ["安全設計の必要性が高い開口部", "マンション、オフィスビル、店舗、商業施設", "学校、公共施設など人が集まる場所"],
+          notes: ["テンパライトは4、5、6、8、10、12、15、19ミリ、ミストロンエースは4ミリの記載があります。", "防犯目的なら、強化ガラスではなくセキュオを検討します。"],
+          source: "AGC 強化ガラスカタログ",
+          pdfHref: "",
+          catalogImages: ["catalog image/temperd glass-1.png"]
+        },
+        "pairmulti": {
+          name: "ペアマルチ",
+          category: "複層ガラス",
+          summary: "2枚のガラスの間に密封中空層を作り、基本的な断熱性を高める標準的な複層ガラスです。",
+          features: ["フロート板ガラスと同等の透過性を持ちながら断熱します。", "室内からの眺望を自然に近いクリアな視界で確保します。", "結露軽減と快適な室内環境づくりに役立ちます。"],
+          uses: ["住宅やビルの一般的な断熱窓", "透過性を保ちたい開口部", "暖房負荷を軽減したい窓"],
+          notes: ["断熱性能はフロート板ガラスの約2倍と説明されています。", "中空層厚さによって面積制限があります。"],
+          source: "日本板硝子 商品カタログ P.58",
+          pdfHref: "catalog.pdf#page=41",
+          catalogImages: ["catalog image/pairmulti-1.png"]
+        },
+        "pairmulti-super": {
+          name: "ペアマルチスーパー",
+          category: "Low-E複層ガラス 住宅用",
+          summary: "冬の暖房熱を逃がしにくい、断熱重視の住宅向けLow-E複層ガラスです。",
+          features: ["室内側Low-E膜で冬の暖房熱を逃がしにくい。", "クリアSは日射取得型、グリーンSは日射遮蔽型として紹介されています。", "冷輻射やコールドドラフトをやわらげます。"],
+          uses: ["冬の寒さが厳しい地域の住宅窓", "採光と断熱を両立したい窓", "結露を軽減したい開口部"],
+          notes: ["フロート板ガラスの約3.3倍、一般複層ガラスの約1.7倍の断熱性能と説明されています。", "色調はサンプル確認が推奨されています。"],
+          source: "日本板硝子 商品カタログ P.44-45",
+          pdfHref: "catalog.pdf#page=27",
+          catalogImages: ["catalog image/pairmultisuper-1.png", "catalog image/pairmultisuper-2.png"]
+        },
+        "pairmulti-rayborg": {
+          name: "ペアマルチレイボーグ",
+          category: "Low-E複層ガラス 住宅用",
+          summary: "夏の日射熱や紫外線を抑えたい住宅向けの日射遮蔽型Low-E複層ガラスです。",
+          features: ["室外側ガラスをLow-E膜でコーティング。", "夏の冷房効果を高め、冬は高断熱性能で暖房効率にも役立ちます。", "結露軽減と紫外線カットも特徴です。"],
+          uses: ["住宅の暑さ対策", "冷房負荷を抑えたい窓", "遮熱と断熱を両立したい開口部"],
+          notes: ["日射熱を約60%、紫外線を約82%カットと説明されています。", "サッシ溝幅や中空層厚さによって制限を受ける場合があります。"],
+          source: "日本板硝子 商品カタログ P.42-43",
+          pdfHref: "catalog.pdf#page=25",
+          catalogImages: ["catalog image/pairmultireibobu-1.png", "catalog image/pairmultireibobu-2.png"]
+        },
+        "pairmulti-ea": {
+          name: "ペアマルチEA",
+          category: "Low-E複層ガラス ビル用・住宅用",
+          summary: "自然な見え方と断熱性を両立しやすいLow-E複層ガラスです。",
+          features: ["室外側Low-E膜で暖房熱を逃がしにくく、日射熱を適度に反射します。", "透明で自然な色合いのため、明るい空間づくりに向きます。", "結露軽減と快適な室内環境づくりに役立ちます。"],
+          uses: ["ビルや住宅の窓", "自然な見え方を保ちながら断熱したい開口部", "暖房・冷房負荷を抑えたい窓"],
+          notes: ["フロート板ガラスの約3.1倍、一般複層ガラスの約1.5倍の断熱性能と説明されています。", "大サイズ在庫は事前問い合わせが推奨されています。"],
+          source: "日本板硝子 商品カタログ P.46-47",
+          pdfHref: "catalog.pdf#page=29",
+          catalogImages: ["catalog image/pairmultiea-1.png"]
+        },
+        secuo: {
+          name: "セキュオ",
+          category: "防犯ガラス",
+          summary: "割られても穴を開けにくく、侵入に時間をかけさせる防犯合わせガラスです。",
+          features: ["2枚のガラスの間に厚い中間膜やポリカーボネート板を挟みます。", "こじ破り、打ち破りに抵抗する仕様があります。", "破損時の飛散や落下を抑え、紫外線も99%以上カットと説明されています。"],
+          uses: ["住宅、マンション、店舗の窓や出入口", "貴金属店や博物館の陳列ケース", "防犯対策を重視する開口部"],
+          notes: ["30mil、60mil、90mil、SP、PYなどの仕様があります。", "SPは1.2ミリのポリカーボネート板を挟む仕様です。"],
+          source: "日本板硝子 商品カタログ P.78-79",
+          pdfHref: "catalog.pdf#page=61",
+          catalogImages: ["catalog image/skyuo-1.png"]
+        },
+        lamipane: {
+          name: "ラミペーン",
+          category: "合わせガラス",
+          summary: "板ガラスの間に中間膜を挟み、破損時の破片飛散や脱落を抑える合わせガラスです。",
+          features: ["ポリビニルブチラール中間膜を挟んだ合わせガラス。", "カラーラミペーンは複数の色付き中間膜があります。", "安全性と耐貫通性能が特徴です。"],
+          uses: ["学校、病院、図書館、美術館、博物館", "トップライト、ガラス屋根、浴室間仕切、ベランダフェンス", "安全性が必要な窓や扉"],
+          notes: ["紫外線を99%以上カットと説明されています。", "紫外線以外の可視光でも変色や褪色が起こる場合があります。"],
+          source: "日本板硝子 商品カタログ P.91-92",
+          pdfHref: "catalog.pdf#page=74",
+          catalogImages: ["catalog image/ramipern-1.png"]
+        },
+        sonoglass: {
+          name: "ソノグラス",
+          category: "防音合わせガラス",
+          summary: "防音特殊中間膜を挟み、外部騒音や室内の音漏れを抑えやすい防音合わせガラスです。",
+          features: ["2枚のガラスで防音特殊中間膜を挟みます。", "音域全体にわたって高い遮音性能を持ちます。", "安全性に加え、防犯ガラスと同等の中間膜による防犯性も説明されています。"],
+          uses: ["住宅やオフィスの開口部", "空港、道路、鉄道、工場の近く", "生活音や室内の音漏れが気になる場所"],
+          notes: ["住宅用はJIS等級T-2、建築用はJIS等級T-3をクリアとの記載があります。", "サッシに組み込むとガラス単体の性能値より下がる場合があります。"],
+          source: "日本板硝子 商品カタログ P.94-95",
+          pdfHref: "catalog.pdf#page=77",
+          catalogImages: ["catalog image/sonoglass-1.png"]
+        }
+      };
+
+      function renderProduct() {
+        const id = location.hash.replace("#", "") || "float-glass";
+        const product = productCatalog[id] || productCatalog["float-glass"];
+        document.querySelector("#productName").textContent = product.name;
+        document.querySelector("#productCategory").textContent = product.category;
+        document.querySelector("#summary").textContent = product.summary;
+        document.querySelector("#source").textContent = product.source;
+        const imageSection = document.querySelector("#catalogImageSection");
+        const catalogImages = document.querySelector("#catalogImages");
+        const images = product.catalogImages || [];
+        if (images.length) {
+          catalogImages.replaceChildren(...images.map((src, index) => {
+            const img = document.createElement("img");
+            img.className = "catalog-image";
+            img.src = src;
+            img.alt = `${product.name}のカタログページ画像 ${index + 1}`;
+            return img;
+          }));
+          imageSection.hidden = false;
+        } else {
+          catalogImages.replaceChildren();
+          imageSection.hidden = true;
+        }
+        const catalogLink = document.querySelector("#catalogLink");
+        if (images.length) {
+          catalogLink.href = images[0];
+          catalogLink.textContent = images.length > 1 ? "1枚目のカタログ画像を開く" : "カタログ画像を開く";
+          catalogLink.style.display = "inline-flex";
+        } else if (product.pdfHref) {
+          catalogLink.href = product.pdfHref;
+          catalogLink.textContent = "カタログ画像未登録のためPDFを開く";
+          catalogLink.style.display = "inline-flex";
+        } else {
+          catalogLink.removeAttribute("href");
+          catalogLink.textContent = "カタログ画像未登録";
+          catalogLink.style.display = "inline-flex";
+        }
+        renderList("#features", product.features);
+        renderList("#uses", product.uses);
+        renderList("#notes", product.notes);
+      }
+
+      function renderList(selector, items) {
+        const list = document.querySelector(selector);
+        list.replaceChildren(...items.map((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          return li;
+        }));
+      }
+
+      window.addEventListener("hashchange", renderProduct);
+      renderProduct();
+    </script>
+  </body>
+</html>
