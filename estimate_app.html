@@ -414,16 +414,6 @@ const kinoOrderTypes=['pt4', 'pt5', 'pt6', 'fbt4', 'ap6d', 'ap10d', 'ap3f4d', 'a
 
 const S={glass:0,order:0,travel:0,work:0,waste:0,delivery:0,acc:0};
 
-function recalcGlassTotal(){
-  // 在庫(b-glass)と仕入れ(b-order)を合算してガラス合計を更新
-  const parse=s=>s==='—'?0:parseInt(s.replace(/[¥,]/g,''))||0;
-  const glassEl=document.getElementById('b-glass');
-  const orderEl=document.getElementById('b-order');
-  const g=glassEl.dataset.base!=null?parseInt(glassEl.dataset.base)||0:parse(glassEl.textContent);
-  const o=orderEl.dataset.base!=null?parseInt(orderEl.dataset.base)||0:parse(orderEl.textContent);
-  S.glass=g; S.order=o;
-  recalcTotal();
-}
 
 
 const stockSizeMax={
@@ -1055,6 +1045,20 @@ function removeGlassRow(id){
   if(idx>=0) extraRows.splice(idx,1);
   const el=document.getElementById('extra-row-'+id);
   if(el) el.remove();
+  // 追加行がなくなった or ㎡モードの追加行がなくなった場合、送料をリセット（1枚目が㎡モードでない場合）
+  const hasSqmExtra=extraRows.some(r=>r.mode==='sqm'&&r.total>0);
+  const main1IsSqm=isSqmActive();
+  if(!hasSqmExtra&&!main1IsSqm){
+    const deliveryRow=document.getElementById('b-delivery-row');
+    const deliveryEl=document.getElementById('b-delivery');
+    const miscLabel=document.getElementById('misc-label');
+    if(S.delivery===6000){
+      S.delivery=0;
+      if(deliveryRow) deliveryRow.style.display='none';
+      if(deliveryEl) deliveryEl.textContent='—';
+      if(miscLabel) miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
+    }
+  }
   recalcGlassTotal();
   calcTravel();
 }
@@ -1177,36 +1181,55 @@ function calcExtraRowSqm(id){
   const gcWrap=document.getElementById('ex-gc-wrap-'+id);
   gcWrap.style.display=gretchanTypes.includes(type)?'block':'none';
   const d=orderData[type];
-  if(!d) return null;
-  let total=null, label='';
   const sel=document.getElementById('ex-otype-'+id);
-  label=sel.options[sel.selectedIndex].text;
+  const label=sel.options[sel.selectedIndex].text;
+  if(!d) return{total:null,label,mode:'sqm'};
+  if(area<=0) return{total:null,label,mode:'sqm'};
+
+  // 強化ガラス（枚/㎡）
   if(kyokaTypes.includes(type)){
-    total=area<=0.3?d.sheet*count:ceil100(d.sqm*area*count);
-  } else if(secuoTypes.includes(type)){
-    let u=area<=0.3?d.s:area<=4?d.m:d.l;
-    total=u?(area<=0.3?u*count:ceil100(u*area*count)):null;
-  } else if(lamiTypes.includes(type)){
-    let u=area<=0.3?d.s:d.m;
-    total=area<=0.3?u*count:ceil100(u*area*count);
-  } else if(gretchanTypes.includes(type)){
-    const tbl=gc===1?d.g1:d.g0;
-    let u=null;for(const[max,p]of tbl){if(area<=max){u=p;break;}}
-    total=u?ceil100(u*area*count):null;
-  } else {
-    // sqmTbl形式 or 配列形式
-    const tbl=d.sqmTbl||d;
-    if(type==='mirror_cut'&&area<=0.1){
-      total=null;
-      label+='（問い合わせ）';
-    } else if(area<=0.1&&d.sheet!=null){
-      total=ceil100(d.sheet*count);
-    } else if(Array.isArray(tbl)){
-      let u=null;for(const[max,p]of tbl){if(area<=max){u=p;break;}}
-      total=u?ceil100(Math.round(u*area*count)):null;
-    }
+    const total=area<=0.3?d.sheet*count:ceil100(d.sqm*area*count);
+    return{total,label,mode:'sqm'};
   }
-  return{total, label, mode:'sqm'};
+  // セキュオ（枚/㎡/4㎡〜）
+  if(secuoTypes.includes(type)){
+    let total;
+    if(area<=0.3){total=d.s*count;}
+    else if(area<=4){total=ceil100(d.m*area*count);}
+    else{total=d.l?ceil100(d.l*area*count):null;}
+    return{total,label,mode:'sqm'};
+  }
+  // ラミペーン・スペーシア・ソノグラス（枚/㎡）
+  if(lamiTypes.includes(type)){
+    if(area>4) return{total:null,label:label+'（範囲外）',mode:'sqm'};
+    const total=area<=0.3?d.s*count:ceil100(d.m*area*count);
+    return{total,label,mode:'sqm'};
+  }
+  // ペアマルチ系（グレチャンあり/なし）
+  if(gretchanTypes.includes(type)){
+    const tbl=gc===1?d.g1:d.g0;
+    let unit=null;
+    for(const [max,p] of tbl){if(area<=max){unit=p;break;}}
+    if(!unit) return{total:null,label:label+'（範囲外）',mode:'sqm'};
+    const isSheetPrice=area<=0.3;
+    const total=isSheetPrice?unit*count:ceil100(unit*area*count);
+    return{total,label,mode:'sqm'};
+  }
+  // 通常㎡テーブル（sqmTbl形式 or 配列形式）
+  const tbl=d.sqmTbl||d;
+  if(type==='mirror_cut'&&area<=0.1){
+    return{total:null,label:label+'（問い合わせ）',mode:'sqm'};
+  }
+  // 0.1㎡以下は枚単価
+  if(area<=0.1&&d.sheet!=null){
+    const total=ceil100(d.sheet*count);
+    return{total,label,mode:'sqm'};
+  }
+  let unit=null;
+  for(const [max,p] of tbl){if(area<=max){unit=p;break;}}
+  if(!unit) return{total:null,label:label+'（範囲外）',mode:'sqm'};
+  const total=ceil100(Math.round(unit*area*count));
+  return{total,label,mode:'sqm'};
 }
 
 function calcExtraRowShaku(id){
@@ -1284,6 +1307,22 @@ function recalcGlassTotal(){
   glassDetailEl.style.display=totalGlass>0&&shakuExtra>0?'flex':'none';
   orderRowEl.style.display=totalOrder>0?'flex':'none';
   orderDetailEl.style.display=totalOrder>0&&sqmExtra>0?'flex':'none';
+
+  // 追加行に㎡モードのものがある場合、メーカー送料6,000円を自動追加（未設定の場合のみ）
+  const hasSqmExtra=extraRows.some(r=>r.mode==='sqm'&&r.total>0);
+  if(hasSqmExtra){
+    const deliveryRow=document.getElementById('b-delivery-row');
+    const deliveryEl=document.getElementById('b-delivery');
+    const miscLabel=document.getElementById('misc-label');
+    // 既に6,000円が設定済みの場合は何もしない
+    if(S.delivery!==6000){
+      S.delivery=6000;
+      if(deliveryRow) deliveryRow.style.display='';
+      if(deliveryEl) deliveryEl.textContent='¥6,000';
+      if(miscLabel) miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+    }
+  }
+
   recalcTotal();
 }
 
