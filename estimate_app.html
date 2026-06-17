@@ -1302,6 +1302,21 @@ function removeGlassRow(id){
   if(idx>=0) extraRows.splice(idx,1);
   const el=document.getElementById('extra-row-'+id);
   if(el) el.remove();
+  // 追加行がなくなった or ㎡モードの追加行がなくなった場合、送料をリセット（1枚目が㎡モードでない場合）
+  const hasSqmExtra=extraRows.some(r=>r.mode==='sqm'&&r.total>0);
+  const main1IsSqm=isSqmActive();
+  if(!hasSqmExtra&&!main1IsSqm){
+    const deliveryRow=document.getElementById('b-delivery-row');
+    const deliveryEl=document.getElementById('b-delivery');
+    const miscLabel=document.getElementById('misc-label');
+    if(S.delivery===6000){
+      // 1枚目㎡モードが有効でなければ送料をクリア
+      S.delivery=0;
+      if(deliveryRow) deliveryRow.style.display='none';
+      if(deliveryEl) deliveryEl.textContent='—';
+      if(miscLabel) miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
+    }
+  }
   recalcGlassTotal();
   calcTravel();
 }
@@ -1531,6 +1546,22 @@ function recalcGlassTotal(){
   glassDetailEl.style.display=totalGlass>0&&shakuExtra>0?'flex':'none';
   orderRowEl.style.display=totalOrder>0?'flex':'none';
   orderDetailEl.style.display=totalOrder>0&&sqmExtra>0?'flex':'none';
+
+  // 追加行に㎡モードのものがある場合、メーカー送料6,000円を自動追加（未設定の場合のみ）
+  const hasSqmExtra=extraRows.some(r=>r.mode==='sqm'&&r.total>0);
+  if(hasSqmExtra){
+    const deliveryRow=document.getElementById('b-delivery-row');
+    const deliveryEl=document.getElementById('b-delivery');
+    const miscLabel=document.getElementById('misc-label');
+    // 既に6,000円が設定済みの場合は何もしない
+    if(S.delivery!==6000){
+      S.delivery=6000;
+      if(deliveryRow) deliveryRow.style.display='';
+      if(deliveryEl) deliveryEl.textContent='¥6,000';
+      if(miscLabel) miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+    }
+  }
+
   recalcTotal();
 }
 
