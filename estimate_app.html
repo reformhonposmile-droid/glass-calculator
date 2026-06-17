@@ -30,29 +30,7 @@ nav.main-nav{position:fixed;bottom:0;left:0;right:0;height:54px;background:#6aae
 .page.active{display:block;position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
 
 .page-inner{padding:14px}
-.cat-tabs{display:flex;gap:6px;overflow-x:auto;padding:12px 14px 10px;-webkit-overflow-scrolling:touch}
-.cat-tabs::-webkit-scrollbar{display:none}
-.cat-btn{white-space:nowrap;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;font-family:inherit;cursor:pointer;flex-shrink:0}
-.cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.cat-content{display:none;padding:0 14px 14px}
-.cat-content.active{display:block}
-.pcard{background:var(--surface);border-radius:14px;margin-bottom:12px;border:1px solid var(--border);overflow:hidden;max-width:100%}
-.pcard-img{width:100%;height:160px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--surface2);max-width:100%}
-.pcard-img img{width:100%;height:160px;object-fit:cover;display:block;max-width:100%}
-.pcard-img.contain img{object-fit:contain;height:160px;padding:8px}
-.pcard-body{padding:12px 14px}
-.pcard-title{font-size:13px;font-weight:700;margin-bottom:3px}
-.pcard-sub{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px}
-.pcard-specs{border-top:1px solid var(--border);padding-top:8px;display:flex;flex-wrap:wrap;gap:6px}
-.spec-chip{background:var(--surface2);border-radius:6px;padding:4px 8px;font-size:10px;color:var(--text2)}
-.spec-chip strong{color:var(--text);font-weight:600}
-.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;margin-bottom:6px;font-weight:500}
-.badge-red{background:#dce6f5;color:var(--accent2)}
-.badge-blue{background:#e8f0fe;color:#1a56db}
-.badge-green{background:#e8f5ee;color:#2d6a4f}
-.badge-orange{background:#fff0e0;color:#b35c00}
-.tip-box{background:#fffbe6;border:1px solid #f0c040;border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:11px;line-height:1.6;color:#7c5800}
-.note-green{background:var(--green-bg);border:1px solid #a8d5be;border-radius:10px;padding:10px 12px;font-size:11px;color:var(--green);line-height:1.6;margin-top:10px}
+
 .esec{background:var(--surface);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid var(--border)}
 .esec-title{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:7px}
 .esec-title .num{background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
@@ -99,223 +77,6 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
 </header>
 <div id="content">
 
-<!-- 製品一覧 -->
-<div id="p-catalog" class="page">
-  <div class="cat-tabs" id="cat-tabs">
-    <button class="cat-btn active" onclick="showCat('tanban',this)">単板ガラス</button>
-    <button class="cat-btn" onclick="showCat('moso',this)">複層ガラス</button>
-    <button class="cat-btn" onclick="showCat('lowe',this)">Low-E複層</button>
-    <button class="cat-btn" onclick="showCat('kino',this)">機能・特殊</button>
-    <button class="cat-btn" onclick="showCat('kagami',this)">鏡</button>
-  </div>
-
-  <!-- 単板 -->
-  <div id="cat-tanban" class="cat-content active">
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-blue">最多使用</div>
-        <div class="pcard-title">フロートガラス 透明（FL）</div>
-        <div class="pcard-sub">いわゆる透明ガラス。溶かしたスズの上にガラス融液を浮かせて製造。住宅窓には3mmと5mmが最多使用。内部木製建具には2mmが使われることも。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">厚み <strong>2・3・5・6・8mm〜</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">3mm最大 <strong>2,540×1,905mm</strong></div>
-          <div class="spec-chip">5mm最大 <strong>3,810×2,540mm</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-orange">要確認</div>
-        <div class="pcard-title">型ガラス（F4A / F6A）</div>
-        <div class="pcard-sub">片側がデコボコ。お客様が「くもりガラス」と言ったらデコボコかザラザラか確認！デコボコ面は室内側に。2mm型は廃盤→ポリカ使用。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">厚み <strong>4mm・6mm</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">4mm最大 <strong>1,829×914mm</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-orange">要確認</div>
-        <div class="pcard-title">摺ガラス（G3 / G5）</div>
-        <div class="pcard-sub">片側がザラザラ。水回りは型ガラス推奨（汚れが取れにくいため）。水に濡れると透明度が増す。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">厚み <strong>2・3・5mm</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">3mm最大 <strong>1,829×914mm</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body" style="padding-bottom:8px">
-        <div class="pcard-title">網入りガラス（PW6.8 / FW6.8）</div>
-        <div class="pcard-sub">防火・飛散防止性能あり。法規上定められた箇所に使用義務。直射日光で熱割れに注意。<strong>発注時は網の形状を必ず記載。</strong>透明は型より高め。</div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--border)">
-        <div style="text-align:center;padding:8px 6px;border-right:1px solid var(--border)">
-          <img id="img-wire-hishi" src="" alt="菱形ワイヤー" style="width:100%;height:70px;object-fit:cover;display:block;border-radius:4px">
-          <div style="font-size:10px;font-weight:700;color:var(--text);margin-top:5px">菱形ワイヤー</div>
-          <div style="font-size:9px;color:var(--green);margin-top:2px">防火○</div>
-        </div>
-        <div style="text-align:center;padding:8px 6px;border-right:1px solid var(--border)">
-          <img id="img-wire-cross" src="" alt="クロスワイヤー" style="width:100%;height:70px;object-fit:cover;display:block;border-radius:4px">
-          <div style="font-size:10px;font-weight:700;color:var(--text);margin-top:5px">クロスワイヤー</div>
-          <div style="font-size:9px;color:var(--green);margin-top:2px">防火○</div>
-        </div>
-        <div style="text-align:center;padding:8px 6px">
-          <img id="img-wire-line" src="" alt="線入りワイヤー" style="width:100%;height:70px;object-fit:cover;display:block;border-radius:4px">
-          <div style="font-size:10px;font-weight:700;color:var(--text);margin-top:5px">線入りワイヤー</div>
-          <div style="font-size:9px;color:var(--accent2);margin-top:2px">防火×</div>
-        </div>
-      </div>
-      <div class="pcard-body" style="padding-top:10px">
-        <div class="pcard-specs">
-          <div class="spec-chip">厚み <strong>6.8mm</strong></div>
-          <div class="spec-chip">発注先 <strong>AGC硝子建材</strong></div>
-          <div class="spec-chip">最大 <strong>2,438×1,829mm</strong></div>
-          <div class="spec-chip">型（FW6.8） <strong>透明より安価</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-red">受注生産</div>
-        <div class="pcard-title">強化ガラス（PT4〜PT6 / FBT4）</div>
-        <div class="pcard-sub">普通ガラスの3〜5倍の強度。割れると粉々になりケガしにくい。防犯性能はなし。テーブル・棚板・台風対策に。納期要確認。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">厚み <strong>4・5・6mm（型4mm）</strong></div>
-          <div class="spec-chip">発注先 <strong>AGC硝子建材</strong></div>
-          <div class="spec-chip">商品名 <strong>テンパライト</strong></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 複層 -->
-  <div id="cat-moso" class="cat-content">
-    <div class="tip-box">複層ガラスは全て受注生産品です。納期がかかることを必ずお客様へお伝えください。片側だけの修理は不可です。</div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-red">受注生産</div>
-        <div class="pcard-title">一般複層ガラス（ペアマルチ）</div>
-        <div class="pcard-sub">2枚のガラスの間に乾燥空気を封入。一枚ガラスの約2倍の断熱性能。古い住宅の断熱化に最適。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">主な構成 <strong>3mm+A+3mm 他</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">断熱 <strong>一枚の約2倍</strong></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Low-E -->
-  <div id="cat-lowe" class="cat-content">
-    <div class="tip-box">全て受注生産品。「南面→日射取得型（スーパー）」「西面→日射遮蔽型（レイボーグ）」が基本の使い分けです。</div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-green">断熱重視</div>
-        <div class="pcard-title">ペアマルチスーパー（日射取得型）</div>
-        <div class="pcard-sub">室内側Low-E膜。日射熱を室内に取り込みながら暖房熱を反射。断熱性能は一枚の約3.3倍。冬場に活躍。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">主な構成 <strong>3mm透明+A+LowE3</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">断熱 <strong>一枚の約3.3倍</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-orange">遮熱重視</div>
-        <div class="pcard-title">ペアマルチレイボーグ（日射遮蔽型）</div>
-        <div class="pcard-sub">室外側Low-E膜。日射熱を約60%カット。遮熱性能は一枚の約5倍。夏冬両対応。注意：冬の日差しも遮断するため南面には不向き。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">主な構成 <strong>LowE3+A+3mm透明</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">遮熱 <strong>一枚の約5倍</strong></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 機能・特殊 -->
-  <div id="cat-kino" class="cat-content">
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-red">受注生産</div>
-        <div class="pcard-title">真空ガラス（スペーシア）</div>
-        <div class="pcard-sub">フロートの約4倍・ペアマルチの約2倍の断熱性能。6.2mmの薄さで単板サッシへ入れ替え可能。結露抑制効果も。外気温-23℃まで結露しない。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">厚み <strong>6.2mm</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">断熱 <strong>一枚の約4倍</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-red">受注生産 CP認定品</div>
-        <div class="pcard-title">防犯ガラス（セキュオ）</div>
-        <div class="pcard-sub">中間膜やポリカで「こじ破り」「打ち破り」を防止。30（安価・こじ破り対策）→60（標準・おすすめ）→SP（最強・単板サッシOK）の順。90は需要不明。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">種類 <strong>30mil / 60mil / 90mil / SP</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">単板サッシ <strong>30・60・SP対応</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-red">受注生産</div>
-        <div class="pcard-title">合わせガラス（ラミペーン）</div>
-        <div class="pcard-sub">紫外線カット率99%以上・飛散防止性能。カラーラミペーンは5色展開。家具の色褪せ対策に最適。学校・病院など幅広い場所で使用。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">主な構成 <strong>3mm+中間膜15mil+3mm</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">カラー <strong>クリア・グレー・ホワイト他</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="badge badge-red">受注生産</div>
-        <div class="pcard-title">防音ガラス（ソノグラス）</div>
-        <div class="pcard-sub">防音特殊中間膜で音域全体をカバー。6.8mmで単板サッシ入れ替え可。内窓との組み合わせでさらに効果大。遮音コスパはソノグラスが一番。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">主な構成 <strong>3mm+遮音膜30mil+3mm</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">厚み <strong>6.8mm（単板サッシOK）</strong></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 鏡 -->
-  <div id="cat-kagami" class="cat-content">
-    <div class="tip-box">洗面所→TED（簡易防湿）、浴室→OC（防湿）が基本の使い分けです。「曇らない鏡」は存在しないので「防曇鏡」を案内してください。</div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="pcard-title">鏡（5mm・各仕上げ）</div>
-        <div class="pcard-sub">フロートガラスの片面に銀膜を塗布。湿気で黒く変色するため水回りには防湿加工品を使用。</div>
-        <div class="pcard-specs">
-          <div class="spec-chip">切放し <strong>加工のみ</strong></div>
-          <div class="spec-chip">4方磨き <strong>姿見・額向け</strong></div>
-          <div class="spec-chip">TED <strong>洗面所向け</strong></div>
-          <div class="spec-chip">OC防湿 <strong>浴室向け</strong></div>
-          <div class="spec-chip">発注先 <strong>日本板硝子</strong></div>
-          <div class="spec-chip">最大 <strong>3,048×1,829mm</strong></div>
-        </div>
-      </div>
-    </div>
-    <div class="pcard">
-      <div class="pcard-body">
-        <div class="pcard-title">防湿加工の比較（TED vs 無加工）</div>
-        <div class="pcard-sub">左：防湿加工なし　右：TED加工。水回りでは防湿加工品を必ず使用してください。</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- 見積もり -->
 <div id="p-estimate" class="page active">
@@ -567,9 +328,6 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
 </div>
 <nav class="main-nav">
   <div class="main-indicator" id="main-ind"></div>
-  <button class="mnav-btn" onclick="showPage('p-catalog',0)" style="display:none">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>製品一覧
-  </button>
   <button class="mnav-btn active" onclick="showPage('p-estimate',0)">
     <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>見積もり
   </button>
@@ -1143,12 +901,7 @@ function showPage(id,idx){
   const ind=document.getElementById('main-ind');
   if(ind){ind.style.width=(100/n)+'%';ind.style.left=(100/n*idx)+'%';}
 }
-const catIds=['tanban','moso','lowe','kino','kagami'];
-function showCat(id,btn){
-  catIds.forEach(i=>{const el=document.getElementById('cat-'+i);if(el)el.classList.remove('active');});
-  document.querySelectorAll('#cat-tabs .cat-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('cat-'+id).classList.add('active');btn.classList.add('active');
-}
+
 function calcTravel(){
   const tMin=parseInt(document.getElementById('e-travel').value)||0;
   const wMin=parseInt(document.getElementById('e-work').value)||0;
@@ -1302,21 +1055,6 @@ function removeGlassRow(id){
   if(idx>=0) extraRows.splice(idx,1);
   const el=document.getElementById('extra-row-'+id);
   if(el) el.remove();
-  // 追加行がなくなった or ㎡モードの追加行がなくなった場合、送料をリセット（1枚目が㎡モードでない場合）
-  const hasSqmExtra=extraRows.some(r=>r.mode==='sqm'&&r.total>0);
-  const main1IsSqm=isSqmActive();
-  if(!hasSqmExtra&&!main1IsSqm){
-    const deliveryRow=document.getElementById('b-delivery-row');
-    const deliveryEl=document.getElementById('b-delivery');
-    const miscLabel=document.getElementById('misc-label');
-    if(S.delivery===6000){
-      // 1枚目㎡モードが有効でなければ送料をクリア
-      S.delivery=0;
-      if(deliveryRow) deliveryRow.style.display='none';
-      if(deliveryEl) deliveryEl.textContent='—';
-      if(miscLabel) miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
-    }
-  }
   recalcGlassTotal();
   calcTravel();
 }
@@ -1546,22 +1284,6 @@ function recalcGlassTotal(){
   glassDetailEl.style.display=totalGlass>0&&shakuExtra>0?'flex':'none';
   orderRowEl.style.display=totalOrder>0?'flex':'none';
   orderDetailEl.style.display=totalOrder>0&&sqmExtra>0?'flex':'none';
-
-  // 追加行に㎡モードのものがある場合、メーカー送料6,000円を自動追加（未設定の場合のみ）
-  const hasSqmExtra=extraRows.some(r=>r.mode==='sqm'&&r.total>0);
-  if(hasSqmExtra){
-    const deliveryRow=document.getElementById('b-delivery-row');
-    const deliveryEl=document.getElementById('b-delivery');
-    const miscLabel=document.getElementById('misc-label');
-    // 既に6,000円が設定済みの場合は何もしない
-    if(S.delivery!==6000){
-      S.delivery=6000;
-      if(deliveryRow) deliveryRow.style.display='';
-      if(deliveryEl) deliveryEl.textContent='¥6,000';
-      if(miscLabel) miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
-    }
-  }
-
   recalcTotal();
 }
 
