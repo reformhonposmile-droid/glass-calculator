@@ -243,7 +243,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
     </button>
 
     <div class="esec">
-      <div class="esec-title"><span class="num">③</span>出張・施工費</div>
+      <div class="esec-title"><span class="num">④</span>出張・施工費</div>
       <div class="cgrp">
         <div class="irow travel-row">
           <div><div class="clbl">片道（分）</div><input type="number" id="e-travel" value="0" min="0" max="90" inputmode="numeric" oninput="calcTravel();"></div>
@@ -254,7 +254,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
       <div class="esec-note">出張費：<strong id="e-travel-price">—</strong>　／　施工費：<strong id="e-work-price">—</strong></div>
     </div>
     <div class="esec">
-      <div class="esec-title"><span class="num">④</span>廃材搬出・処分費</div>
+      <div class="esec-title"><span class="num">③</span>廃材搬出・処分費</div>
       <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="e-waste" value="1" min="0" max="20" inputmode="numeric" oninput="const w=parseInt(this.value)||0;updateWasteUI(w);recalcTotal();"></div>
       <div id="waste-rule-tanban" class="esec-note">処分費：<strong id="e-waste-price">—</strong>　（3枚まで500円、4枚目から+100円/枚）</div>
       <div id="waste-rule-kino" class="esec-note" style="display:none">処分費：<strong id="e-waste-price-kino">—</strong>　（300円/枚）</div>
@@ -265,7 +265,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
       ＋処分費を追加する
     </button>
     <div class="esec">
-      <div class="esec-title"><span class="num">⑤</span>付属品</div>
+      <div class="esec-title"><span class="num">②</span>付属品</div>
 
       <!-- コーキング（プルダウン） -->
       <div class="cgrp">
@@ -304,16 +304,15 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
       <div id="b-glass-rows">
         <div class="brow" id="b-glass-row"><span class="lbl">①ガラス代（在庫）</span><span class="amt" id="b-glass">—</span></div>
         <div id="b-glass-detail" style="display:none;flex-direction:column"></div>
-        <div class="brow" id="b-order-row"><span class="lbl">②ガラス代（仕入れ）</span><span class="amt" id="b-order">—</span></div>
+        <div class="brow" id="b-order-row"><span class="lbl">①ガラス代（仕入れ）</span><span class="amt" id="b-order">—</span></div>
         <div id="b-order-detail" style="display:none;flex-direction:column"></div>
       </div>
-      <div class="brow"><span class="lbl">③出張費</span><span class="amt" id="b-travel">—</span></div>
-      <div class="brow"><span class="lbl">③施工費</span><span class="amt" id="b-work">—</span></div>
-      <div class="brow"><span class="lbl">④廃材処分費</span><span class="amt" id="b-waste">—</span></div>
+      <div class="brow"><span class="lbl">④出張施工費</span><span class="amt" id="b-travel">—</span></div>
+      <div class="brow"><span class="lbl">③廃材処分費</span><span class="amt" id="b-waste">—</span></div>
       <div class="brow" id="b-delivery-row" style="display:none"><span class="lbl">メーカー配送料</span><span class="amt" id="b-delivery">—</span></div>
-      <div class="brow"><span class="lbl">⑤付属品</span><span class="amt" id="b-acc">—</span></div>
+      <div class="brow"><span class="lbl">②付属品</span><span class="amt" id="b-acc">—</span></div>
       <div id="b-acc-detail" style="display:none;flex-direction:column;gap:0"></div>
-      <div class="brow"><span class="lbl" id="misc-label">⑥諸経費（5%・最低2,000円）</span><span class="amt" id="b-misc">—</span></div>
+      <div class="brow"><span class="lbl" id="misc-label">⑤諸経費（5%・最低2,000円）</span><span class="amt" id="b-misc">—</span></div>
       <div class="btotal"><span>合計（税別）</span><span class="amt" id="b-total">—</span></div>
     </div>
     <div class="total-card">
@@ -584,11 +583,11 @@ function calcEst(){
   document.getElementById('e-glass-total').textContent=fmt(glassTotal);
 
   const tp=getTravelPrice(tMin),wp=getWorkPrice(wMin);
+  const travelWorkTotal=tp===null||wp===null?null:tp+wp;
   document.getElementById('e-travel-price').textContent=fmt(tp);
   document.getElementById('e-work-price').textContent=fmt(wp);
   setBaseGlassTotal(glassTotal);
-  document.getElementById('b-travel').textContent=fmt(tp);
-  document.getElementById('b-work').textContent=fmt(wp);
+  document.getElementById('b-travel').textContent=fmt(travelWorkTotal);
 
   updateWasteUI(waste);
   recalcGlassTotal();
@@ -641,7 +640,7 @@ function updateWasteUI(waste){
       deliveryRow.style.display='';
       document.getElementById('b-delivery').textContent='¥6,000';
       S.delivery=6000;
-      miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+      miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
     } else {
       deliveryRow.style.display='none';
       document.getElementById('b-delivery').textContent='—';
@@ -657,7 +656,7 @@ function updateWasteUI(waste){
       deliveryRow.style.display='';
       document.getElementById('b-delivery').textContent='¥6,000';
       S.delivery=6000;
-      miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+      miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
     } else {
       deliveryRow.style.display='none';
       document.getElementById('b-delivery').textContent='—';
@@ -675,7 +674,6 @@ function recalcTotal(){
   const glass=parse(document.getElementById('b-glass').textContent);
   const order=parse(document.getElementById('b-order').textContent);
   const travel=parse(document.getElementById('b-travel').textContent);
-  const work=parse(document.getElementById('b-work').textContent);
   const waste=parse(document.getElementById('b-waste').textContent);
   const delivery=parse(document.getElementById('b-delivery').textContent);
   const tMin=parseInt(document.getElementById('e-travel').value)||0;
@@ -689,7 +687,7 @@ function recalcTotal(){
     document.getElementById('e-tax').textContent='税込：—';
     return;
   }
-  const sub=glass+order+travel+work+waste+delivery+acc;
+  const sub=glass+order+travel+waste+delivery+acc;
   const miscRaw=sub*0.05;
   const miscCeil=Math.ceil(miscRaw/100)*100;  // 100円単位切り上げ
   const misc=Math.max(2000,miscCeil);
@@ -897,10 +895,10 @@ function calcTravel(){
   const tMin=parseInt(document.getElementById('e-travel').value)||0;
   const wMin=parseInt(document.getElementById('e-work').value)||0;
   const tp=getTravelPrice(tMin),wp=getWorkPrice(wMin);
+  const travelWorkTotal=tp===null||wp===null?null:tp+wp;
   document.getElementById('e-travel-price').textContent=fmt(tp);
   document.getElementById('e-work-price').textContent=fmt(wp);
-  document.getElementById('b-travel').textContent=fmt(tp);
-  document.getElementById('b-work').textContent=fmt(wp);
+  document.getElementById('b-travel').textContent=fmt(travelWorkTotal);
   S.travel=tp||0; S.work=wp||0;
   recalcTotal();
 }
@@ -1072,7 +1070,7 @@ function addExtraWasteRow(id){
   sec.id='extra-waste-row-'+id;
   sec.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="esec-title" style="margin:0"><span class="num">④</span>追加ガラス ${id} 残材搬出・処分費 (必要に応じて入れてください)</div>
+      <div class="esec-title" style="margin:0"><span class="num">③</span>追加ガラス ${id} 残材搬出・処分費 (必要に応じて入れてください)</div>
       <button onclick="removeExtraWasteRow(${id})" style="border:none;background:none;cursor:pointer;color:var(--text2);font-size:18px;padding:2px 6px;border-radius:6px;line-height:1" title="削除">×</button>
     </div>
     <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-waste-${id}" value="0" min="0" max="20" inputmode="numeric" oninput="updateExtraWasteRow(${id});recalcTotal();"></div>
@@ -1125,7 +1123,7 @@ function addExtraWasteRow(){
   sec.id='extra-waste-row-'+id;
   sec.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="esec-title" style="margin:0"><span class="num">④</span>追加 処分費 ${id}</div>
+      <div class="esec-title" style="margin:0"><span class="num">③</span>追加 処分費 ${id}</div>
       <button onclick="removeExtraWasteRow(${id})" style="border:none;background:none;cursor:pointer;color:var(--text2);font-size:18px;padding:2px 6px;border-radius:6px;line-height:1" title="削除">×</button>
     </div>
     <div class="cgrp">
@@ -1320,7 +1318,7 @@ function recalcGlassTotal(){
       S.delivery=6000;
       if(deliveryRow) deliveryRow.style.display='';
       if(deliveryEl) deliveryEl.textContent='¥6,000';
-      if(miscLabel) miscLabel.textContent='⑥諸経費（5%・最低2,000円）';
+      if(miscLabel) miscLabel.textContent='⑤諸経費（5%・最低2,000円）';
     }
   }
 
@@ -1430,6 +1428,38 @@ function calcAcc(){
   recalcTotal();
 }
 
+// 入力セクションと見積もり内訳を、付属品 → 廃材 → 出張・施工費の順にする
+function reorderEstimateSections(){
+  const accessorySection=document.getElementById('acc-items')?.closest('.esec');
+  const wasteSection=document.getElementById('e-waste')?.closest('.esec');
+  const travelSection=document.getElementById('e-travel')?.closest('.esec');
+  const addWasteButton=document.getElementById('add-waste-btn');
+  if(accessorySection&&wasteSection&&travelSection&&addWasteButton){
+    travelSection.before(accessorySection);
+    addWasteButton.after(travelSection);
+    accessorySection.querySelector('.num').textContent='②';
+    wasteSection.querySelector('.num').textContent='③';
+    travelSection.querySelector('.num').textContent='④';
+  }
+
+  const glassRows=document.getElementById('b-glass-rows');
+  const accessoryRow=document.getElementById('b-acc')?.closest('.brow');
+  const accessoryDetail=document.getElementById('b-acc-detail');
+  const wasteRow=document.getElementById('b-waste')?.closest('.brow');
+  const deliveryRow=document.getElementById('b-delivery-row');
+  const travelRow=document.getElementById('b-travel')?.closest('.brow');
+  if(glassRows&&accessoryRow&&accessoryDetail&&wasteRow&&deliveryRow&&travelRow){
+    glassRows.after(accessoryRow);
+    accessoryRow.after(accessoryDetail);
+    accessoryDetail.after(wasteRow);
+    wasteRow.after(deliveryRow);
+    deliveryRow.after(travelRow);
+    accessoryRow.querySelector('.lbl').textContent='②付属品';
+    wasteRow.querySelector('.lbl').textContent='③廃材処分費';
+    travelRow.querySelector('.lbl').textContent='④出張施工費';
+  }
+}
+
 // 初期状態：両セクションを有効に
 let mainMode='shaku';
 
@@ -1454,6 +1484,7 @@ const _s1=document.getElementById('sec-shaku');
 const _s2=document.getElementById('sec-sqm');
 _s1.style.display='block';_s1.style.opacity='1';_s1.style.pointerEvents='auto';_s1.classList.remove('disabled');
 _s2.style.display='none';_s2.style.opacity='1';_s2.style.pointerEvents='auto';_s2.classList.remove('disabled');
+reorderEstimateSections();
 buildAccItems();calcEst();calcOrder();calcAcc();calcTravel();recalcGlassTotal();
 const visibleBtns=[...document.querySelectorAll('.mnav-btn')].filter(b=>b.style.display!=='none');
 const n=visibleBtns.length;
