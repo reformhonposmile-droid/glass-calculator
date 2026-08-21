@@ -243,7 +243,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
     </button>
 
     <div class="esec">
-      <div class="esec-title"><span class="num">④</span>出張・施工費</div>
+      <div class="esec-title"><span class="num">②</span>出張・施工費</div>
       <div class="cgrp">
         <div class="irow travel-row">
           <div><div class="clbl">片道（分）</div><input type="number" id="e-travel" value="0" min="0" max="90" inputmode="numeric" oninput="calcTravel();"></div>
@@ -261,7 +261,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
     </div>
     <div id="extra-waste-rows"></div>
     <div class="esec">
-      <div class="esec-title"><span class="num">②</span>付属品</div>
+      <div class="esec-title"><span class="num">④</span>付属品</div>
 
       <!-- コーキング（プルダウン） -->
       <div class="cgrp">
@@ -303,10 +303,10 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
         <div class="brow" id="b-order-row"><span class="lbl">①ガラス代（仕入れ）</span><span class="amt" id="b-order">—</span></div>
         <div id="b-order-detail" style="display:none;flex-direction:column"></div>
       </div>
-      <div class="brow"><span class="lbl">④出張施工費</span><span class="amt" id="b-travel">—</span></div>
+      <div class="brow"><span class="lbl">②出張施工費</span><span class="amt" id="b-travel">—</span></div>
       <div class="brow"><span class="lbl">③廃材処分費</span><span class="amt" id="b-waste">—</span></div>
       <div class="brow" id="b-delivery-row" style="display:none"><span class="lbl">メーカー配送料</span><span class="amt" id="b-delivery">—</span></div>
-      <div class="brow"><span class="lbl">②付属品</span><span class="amt" id="b-acc">—</span></div>
+      <div class="brow"><span class="lbl">④付属品</span><span class="amt" id="b-acc">—</span></div>
       <div id="b-acc-detail" style="display:none;flex-direction:column;gap:0"></div>
       <div class="brow"><span class="lbl" id="misc-label">⑤諸経費（5%・最低2,000円）</span><span class="amt" id="b-misc">—</span></div>
       <div class="btotal"><span>合計（税別）</span><span class="amt" id="b-total">—</span></div>
@@ -1424,7 +1424,7 @@ function calcAcc(){
   recalcTotal();
 }
 
-// 入力セクションと見積もり内訳を、付属品 → 廃材 → 出張・施工費の順にする
+// 見積もり内訳を、番号順（ガラス → 出張施工費 → 廃材 → 付属品）にする
 function reorderEstimateSections(){
   const accessorySection=document.getElementById('acc-items')?.closest('.esec');
   const wasteSection=document.getElementById('e-waste')?.closest('.esec');
@@ -1445,14 +1445,14 @@ function reorderEstimateSections(){
   const deliveryRow=document.getElementById('b-delivery-row');
   const travelRow=document.getElementById('b-travel')?.closest('.brow');
   if(glassRows&&accessoryRow&&accessoryDetail&&wasteRow&&deliveryRow&&travelRow){
-    glassRows.after(accessoryRow);
-    accessoryRow.after(accessoryDetail);
-    accessoryDetail.after(wasteRow);
+    glassRows.after(travelRow);
+    travelRow.after(wasteRow);
     wasteRow.after(deliveryRow);
-    deliveryRow.after(travelRow);
-    accessoryRow.querySelector('.lbl').textContent='②付属品';
+    deliveryRow.after(accessoryRow);
+    accessoryRow.after(accessoryDetail);
+    accessoryRow.querySelector('.lbl').textContent='④付属品';
     wasteRow.querySelector('.lbl').textContent='③廃材処分費';
-    travelRow.querySelector('.lbl').textContent='④出張施工費';
+    travelRow.querySelector('.lbl').textContent='②出張施工費';
   }
 }
 
