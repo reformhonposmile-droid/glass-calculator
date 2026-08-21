@@ -1486,7 +1486,7 @@ const visibleBtns=[...document.querySelectorAll('.mnav-btn')].filter(b=>b.style.
 const n=visibleBtns.length;
 const ind=document.getElementById('main-ind');
 if(ind){ind.style.width=(100/n)+'%';ind.style.left='0%';}
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(()=>{});
 
 (function(){
   const launcher=document.getElementById('floatChatLauncher');
