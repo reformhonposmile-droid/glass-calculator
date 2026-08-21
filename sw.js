@@ -1,4 +1,4 @@
-const CACHE_NAME = 'glass-calculator-v1';
+const CACHE_NAME = 'glass-calculator-v2';
 
 const APP_SHELL = [
   './',
@@ -40,25 +40,26 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
-
-      return fetch(event.request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type === 'opaque') {
-            return response;
-          }
-
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+    // Online: always request the latest version, then refresh the local cache.
+    // Offline: fall back to the last successfully cached version.
+    fetch(event.request)
+      .then((response) => {
+        if (!response || response.status !== 200 || response.type === 'opaque') {
           return response;
-        })
-        .catch(() => {
+        }
+
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
           if (event.request.mode === 'navigate') {
             return caches.match('./estimate_app.html');
           }
           return new Response('', { status: 503, statusText: 'Offline' });
-        });
-    })
+        })
+      )
   );
 });
