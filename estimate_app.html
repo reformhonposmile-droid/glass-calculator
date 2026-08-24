@@ -63,8 +63,9 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
 @media (max-width:720px){
   html,body{height:auto;min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
   #app{position:relative;min-height:100dvh;display:block;padding-bottom:74px}
-  #content{display:block}
+  #content{position:relative;top:auto;left:auto;right:auto;bottom:auto;display:block}
   .page.active{position:relative;top:auto;left:auto;right:auto;bottom:auto;overflow:visible;min-height:auto}
+  .page-inner{padding-bottom:170px}
   nav.main-nav{position:fixed;bottom:0;left:0;right:0}
 }
 </style>
