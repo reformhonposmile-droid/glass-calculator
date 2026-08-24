@@ -124,7 +124,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
           </div>
         </div>
         <div class="cgrp" style="margin-top:6px"><div class="clbl">枚数</div>
-          <input type="number" id="e-count-shaku" value="1" min="1" max="99" inputmode="numeric" oninput="calcEst();">
+<input type="number" id="e-count-shaku" value="0" min="0" max="99" inputmode="numeric" oninput="calcEst();">
         </div>
         <div class="esec-note">適用範囲：<span id="e-glass-range">—</span>　→　<strong id="e-glass-price">—</strong></div>
         <div class="esec-note">小計：<strong id="e-glass-total">—</strong></div>
@@ -217,7 +217,7 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
           </div>
         </div>
         <div class="cgrp" style="margin-top:6px"><div class="clbl">枚数</div>
-          <input type="number" id="e-count-sqm" value="1" min="1" max="99" inputmode="numeric" oninput="calcOrder(false);">
+<input type="number" id="e-count-sqm" value="0" min="0" max="99" inputmode="numeric" oninput="calcOrder(false);">
         </div>
         <div class="esec-note">単価：<strong id="o-unit">—</strong></div>
         <div class="esec-note">小計：<strong id="o-total-price">—</strong></div>
@@ -248,14 +248,14 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
         <div class="irow travel-row">
           <div><div class="clbl">片道（分）</div><input type="number" id="e-travel" value="0" min="0" max="90" inputmode="numeric" oninput="calcTravel();"></div>
           <div><div class="clbl">施工時間（分）</div><input type="number" id="e-work" value="0" min="0" inputmode="numeric" oninput="calcTravel();"></div>
-          <div><div class="clbl">人工</div><input type="number" id="e-labor" value="1" min="0" step="1" inputmode="numeric" oninput="calcTravel();"></div>
+<div><div class="clbl">人工</div><input type="number" id="e-labor" value="0" min="0" step="1" inputmode="numeric" oninput="calcTravel();"></div>
         </div>
       </div>
       <div class="esec-note">出張費：<strong id="e-travel-price">—</strong>　／　施工費：<strong id="e-work-price">—</strong></div>
     </div>
     <div class="esec">
       <div class="esec-title"><span class="num">③</span>廃材搬出・処分費</div>
-      <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="e-waste" value="1" min="0" max="20" inputmode="numeric" oninput="const w=parseInt(this.value)||0;updateWasteUI(w);recalcTotal();"></div>
+<div class="cgrp"><div class="clbl">枚数</div><input type="number" id="e-waste" value="0" min="0" max="20" inputmode="numeric" oninput="const w=parseInt(this.value)||0;updateWasteUI(w);recalcTotal();"></div>
       <div id="waste-rule-tanban" class="esec-note">処分費：<strong id="e-waste-price">—</strong>　（3枚まで500円、4枚目から+100円/枚）</div>
       <div id="waste-rule-kino" class="esec-note" style="display:none">処分費：<strong id="e-waste-price-kino">—</strong>　（300円/枚）</div>
     </div>
@@ -282,8 +282,8 @@ input[type=number]:focus,select:focus{border-color:var(--accent2)}
       </div>
       <div class="cgrp" id="acc-caulk-len-wrap" style="display:none">
         <div class="irow">
-          <div><div class="clbl">長さ（m）</div><input type="number" id="acc-caulk-len" value="1" min="0.1" step="0.1" inputmode="decimal" oninput="calcAcc()"></div>
-          <div><div class="clbl">本数</div><input type="number" id="acc-caulk-count" value="1" min="1" max="99" inputmode="numeric" oninput="calcAcc()"></div>
+<div><div class="clbl">長さ（m）</div><input type="number" id="acc-caulk-len" value="0" min="0" step="0.1" inputmode="decimal" oninput="calcAcc()"></div>
+<div><div class="clbl">本数</div><input type="number" id="acc-caulk-count" value="0" min="0" max="99" inputmode="numeric" oninput="calcAcc()"></div>
         </div>
         <div class="esec-note" style="margin-top:6px">コーキング代：<strong id="acc-caulk-price">—</strong></div>
       </div>
@@ -560,10 +560,10 @@ function calcEst(){
   const type=document.getElementById('e-type').value;
   const w=parseInt(document.getElementById('e-w').value)||0;
   const h=parseInt(document.getElementById('e-h').value)||0;
-  const count=parseInt(document.getElementById('e-count-shaku').value)||1;
+  const count=parseInt(document.getElementById('e-count-shaku').value)||0;
   const tMin=parseInt(document.getElementById('e-travel').value)||0;
   const wMin=parseInt(document.getElementById('e-work').value)||0;
-  const waste=parseInt(document.getElementById('e-waste').value)||1;
+  const waste=parseInt(document.getElementById('e-waste').value)||0;
 
   let price=null,range='—';
   if(type==='ami_t'){
@@ -783,7 +783,7 @@ function calcOrder(userAction=false){
     unitEl.textContent='—';
     totalEl.textContent='—';
     setBaseOrderTotal(null);
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
 
@@ -791,18 +791,18 @@ function calcOrder(userAction=false){
 
   // 強化ガラス（枚/㎡）
   if(kyokaTypes.includes(type)){
-    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    const count=parseInt(document.getElementById('e-count-sqm').value)||0;
     const unit=area<=0.3?d.sheet:d.sqm;
     const total=area<=0.3?d.sheet*count:ceil100(d.sqm*area*count);
     unitEl.textContent=area<=0.3?fmt(d.sheet)+'/枚'+noteStr:fmt(d.sqm)+'/㎡';
     totalEl.textContent=fmt(total)+(count>1?` (${count}枚)`:'');
     setBaseOrderTotal(total);
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
   // セキュオ（枚/㎡/4㎡〜）
   if(secuoTypes.includes(type)){
-    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    const count=parseInt(document.getElementById('e-count-sqm').value)||0;
     let unit,total;
     if(area<=0.3){unit=d.s;total=d.s*count;}
     else if(area<=4){unit=d.m;total=ceil100(d.m*area*count);}
@@ -810,17 +810,17 @@ function calcOrder(userAction=false){
     unitEl.textContent=area<=0.3?fmt(unit)+'/枚'+noteStr:fmt(unit)+'/㎡';
     totalEl.textContent=fmt(total)+(count>1?` (${count}枚)`:'');
     setBaseOrderTotal(total);
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
   // ラミペーン・スペーシア・ソノグラス（枚/㎡）
   if(lamiTypes.includes(type)){
-    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    const count=parseInt(document.getElementById('e-count-sqm').value)||0;
     if(area>4){
       unitEl.textContent='範囲外';
       totalEl.textContent='—';
       setBaseOrderTotal(null);
-      const waste=parseInt(document.getElementById('e-waste').value)||1;
+      const waste=parseInt(document.getElementById('e-waste').value)||0;
       updateWasteUI(waste);recalcGlassTotal();return;
     }
     const unit=area<=0.3?d.s:d.m;
@@ -828,32 +828,32 @@ function calcOrder(userAction=false){
     unitEl.textContent=area<=0.3?fmt(d.s)+'/枚'+noteStr:fmt(d.m)+'/㎡';
     totalEl.textContent=fmt(total)+(count>1?` (${count}枚)`:'');
     setBaseOrderTotal(total);
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
   // ペアマルチ系（グレチャンあり/なし）
   if(gretchanTypes.includes(type)){
-    const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+    const count=parseInt(document.getElementById('e-count-sqm').value)||0;
     const tbl=gc===1?d.g1:d.g0;
     let unit=null;
     for(const [max,p] of tbl){if(area<=max){unit=p;break;}}
-    if(!unit){unitEl.textContent='範囲外';totalEl.textContent='—';setBaseOrderTotal(null);const w0=parseInt(document.getElementById('e-waste').value)||1;updateWasteUI(w0);recalcGlassTotal();return;}
+    if(!unit){unitEl.textContent='範囲外';totalEl.textContent='—';setBaseOrderTotal(null);const w0=parseInt(document.getElementById('e-waste').value)||0;updateWasteUI(w0);recalcGlassTotal();return;}
     const isSheetPrice=area<=0.3;
     const pairTotal=isSheetPrice?unit*count:ceil100(unit*area*count);
     unitEl.textContent=fmt(unit)+(isSheetPrice?'/枚':'/㎡')+noteStr;
     totalEl.textContent=fmt(pairTotal)+(count>1?` (${count}枚)`:'');
     setBaseOrderTotal(pairTotal);
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
   // 通常㎡テーブル（sqmTbl形式 or 配列形式）
-  const count=parseInt(document.getElementById('e-count-sqm').value)||1;
+  const count=parseInt(document.getElementById('e-count-sqm').value)||0;
   const tbl=d.sqmTbl||d;
   if(type==='mirror_cut'&&area<=0.1){
     unitEl.textContent='問い合わせ';
     totalEl.textContent='—';
     setBaseOrderTotal(null);
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
   // 0.1㎡以下は枚単価
@@ -862,17 +862,17 @@ function calcOrder(userAction=false){
     unitEl.textContent=fmt(d.sheet)+'/枚'+noteStr;
     totalEl.textContent=fmt(ceil100(total))+(count>1?` (${count}枚)`:'');
     setBaseOrderTotal(ceil100(total));
-    const waste=parseInt(document.getElementById('e-waste').value)||1;
+    const waste=parseInt(document.getElementById('e-waste').value)||0;
     updateWasteUI(waste);recalcGlassTotal();return;
   }
   let unit=null;
   for(const [max,p] of tbl){if(area<=max){unit=p;break;}}
-  if(!unit){unitEl.textContent='範囲外';totalEl.textContent='—';setBaseOrderTotal(null);const w0=parseInt(document.getElementById('e-waste').value)||1;updateWasteUI(w0);recalcGlassTotal();return;}
+  if(!unit){unitEl.textContent='範囲外';totalEl.textContent='—';setBaseOrderTotal(null);const w0=parseInt(document.getElementById('e-waste').value)||0;updateWasteUI(w0);recalcGlassTotal();return;}
   const orderTotal=ceil100(Math.round(unit*area*count));
   unitEl.textContent=fmt(unit)+'/㎡'+noteStr;
   totalEl.textContent=fmt(orderTotal)+(count>1?` (${count}枚)`:'');
   setBaseOrderTotal(orderTotal);
-  const waste=parseInt(document.getElementById('e-waste').value)||1;
+  const waste=parseInt(document.getElementById('e-waste').value)||0;
   updateWasteUI(waste);
   recalcGlassTotal();
 }
@@ -1011,7 +1011,7 @@ function addGlassRow(){
         <div><div class="clbl">W（幅）mm</div><input type="number" id="ex-w-${id}" value="800" min="1" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
         <div><div class="clbl">H（高さ）mm</div><input type="number" id="ex-h-${id}" value="800" min="1" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
       </div></div>
-      <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-cnt-shaku-${id}" value="1" min="1" max="99" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
+<div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-cnt-shaku-${id}" value="0" min="0" max="99" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
     </div>
 
     <!-- ㎡モード（初期非表示） -->
@@ -1027,7 +1027,7 @@ function addGlassRow(){
           </select>
         </div>
       </div></div>
-      <div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-cnt-sqm-${id}" value="1" min="1" max="99" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
+<div class="cgrp"><div class="clbl">枚数</div><input type="number" id="ex-cnt-sqm-${id}" value="0" min="0" max="99" inputmode="numeric" oninput="calcExtraRow(${id})"></div>
     </div>
 
     <div class="esec-note">小計：<strong id="ex-subtotal-${id}">—</strong></div>`;
@@ -1172,7 +1172,7 @@ function calcExtraRowSqm(id){
   const type=document.getElementById('ex-otype-'+id).value;
   const area=parseFloat(document.getElementById('ex-area-'+id).value)||0;
   const gc=parseInt(document.getElementById('ex-gc-'+id).value)||0;
-  const count=parseInt(document.getElementById('ex-cnt-sqm-'+id).value)||1;
+  const count=parseInt(document.getElementById('ex-cnt-sqm-'+id).value)||0;
   const gcWrap=document.getElementById('ex-gc-wrap-'+id);
   gcWrap.style.display=gretchanTypes.includes(type)?'block':'none';
   const d=orderData[type];
@@ -1231,7 +1231,7 @@ function calcExtraRowShaku(id){
   const type=document.getElementById('ex-type-'+id).value;
   const w=parseInt(document.getElementById('ex-w-'+id).value)||0;
   const h=parseInt(document.getElementById('ex-h-'+id).value)||0;
-  const count=parseInt(document.getElementById('ex-cnt-shaku-'+id).value)||1;
+  const count=parseInt(document.getElementById('ex-cnt-shaku-'+id).value)||0;
   const sel=document.getElementById('ex-type-'+id);
   const label=sel.options[sel.selectedIndex].text;
   let price=null;
@@ -1349,7 +1349,7 @@ function buildAccItems(){
     row.innerHTML=`
       <input type="checkbox" id="${item.id}_chk" onchange="calcAcc()" style="width:16px;height:16px;flex-shrink:0;accent-color:var(--accent2)">
       <label for="${item.id}_chk" style="font-size:12px;flex:1;cursor:pointer;line-height:1.3">${item.label}<br><span style="font-size:10px;color:var(--text2)">¥${item.price.toLocaleString()}/${item.unit}</span></label>
-      <input type="number" id="${item.id}_qty" value="1" min="${item.unit==='㎡'||item.unit==='m'?'0.1':'1'}" max="999" inputmode="${item.unit==='㎡'||item.unit==='m'?'decimal':'numeric'}" step="${item.unit==='㎡'||item.unit==='m'?'0.1':'1'}" oninput="calcAcc()" style="width:58px;height:34px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
+<input type="number" id="${item.id}_qty" value="0" min="0" max="999" inputmode="${item.unit==='㎡'||item.unit==='m'?'decimal':'numeric'}" step="${item.unit==='㎡'||item.unit==='m'?'0.1':'1'}" oninput="calcAcc()" style="width:58px;height:34px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
       <span style="font-size:10px;color:var(--text2);flex-shrink:0">${item.unit}</span>
       <span id="${item.id}_sub" style="font-size:12px;font-family:'DM Mono',monospace;min-width:52px;text-align:right;color:var(--text2)">—</span>`;
     wrap.appendChild(row);
@@ -1365,7 +1365,7 @@ function buildAccItems(){
     row.innerHTML=`
       <input type="checkbox" id="${item.id}_chk" onchange="calcAcc()" style="width:16px;height:16px;flex-shrink:0;accent-color:var(--accent2)">
       <label for="${item.id}_chk" style="font-size:12px;flex:1;cursor:pointer;line-height:1.3">${item.label}<br><span style="font-size:10px;color:var(--text2)">¥${item.price.toLocaleString()}/${item.unit}</span></label>
-      <input type="number" id="${item.id}_qty" value="1" min="1" max="999" inputmode="numeric" step="1" oninput="calcAcc()" style="width:58px;height:34px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
+<input type="number" id="${item.id}_qty" value="0" min="0" max="999" inputmode="numeric" step="1" oninput="calcAcc()" style="width:58px;height:34px;border:1.5px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;background:var(--surface);color:var(--text)">
       <span style="font-size:10px;color:var(--text2);flex-shrink:0">${item.unit}</span>
       <span id="${item.id}_sub" style="font-size:12px;font-family:'DM Mono',monospace;min-width:52px;text-align:right;color:var(--text2)">—</span>`;
     mirrorSec.appendChild(row);
@@ -1388,7 +1388,7 @@ function calcAcc(){
   let caulkTotal=0;
   if(caulkPrice>0){
     const len=parseFloat(document.getElementById('acc-caulk-len').value)||0;
-    const cnt=parseInt(document.getElementById('acc-caulk-count').value)||1;
+    const cnt=parseInt(document.getElementById('acc-caulk-count').value)||0;
     caulkTotal=ceil10(caulkPrice*len*cnt);
     document.getElementById('acc-caulk-price').textContent=fmt(caulkTotal);
   }
@@ -1398,7 +1398,7 @@ function calcAcc(){
   accItems.forEach(item=>{
     const chk=document.getElementById(item.id+'_chk');
     if(!chk) return;
-    const qty=parseFloat(document.getElementById(item.id+'_qty').value)||1;
+    const qty=parseFloat(document.getElementById(item.id+'_qty').value)||0;
     const sub=chk.checked?ceil10(item.price*qty):0;
     const subEl=document.getElementById(item.id+'_sub');
     subEl.textContent=chk.checked?fmt(sub):'—';
@@ -1410,7 +1410,7 @@ function calcAcc(){
   mirrorAccItems.forEach(item=>{
     const chk=document.getElementById(item.id+'_chk');
     if(!chk) return;
-    const qty=parseFloat(document.getElementById(item.id+'_qty').value)||1;
+    const qty=parseFloat(document.getElementById(item.id+'_qty').value)||0;
     const sub=showMirror&&chk.checked?ceil10(item.price*qty):0;
     const subEl=document.getElementById(item.id+'_sub');
     subEl.textContent=chk.checked?fmt(sub):'—';
